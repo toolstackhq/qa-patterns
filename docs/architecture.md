@@ -1,13 +1,13 @@
 # Architecture
 
-`test-framework-patterns` is organized as an npm workspace so teams can install once at the repository root and then run any template or demo application in isolation.
+`qa-patterns` is organized as an npm workspace so teams can install once at the repository root and then run any template or demo application in isolation.
 
 ## Repository modules
 
 - `templates/playwright-template`: Reference automation framework with Playwright, TypeScript, fixtures, page objects, data factories, environment configuration, and CI assets.
 - `test-apps/ui-demo-app`: Deterministic server-rendered banking UI used for end-to-end tests.
 - `test-apps/api-demo-server`: Deterministic Express API used for API workflow tests.
-- `tools/create-test-framework-patterns`: Placeholder CLI package for future project scaffolding.
+- `tools/create-qa-patterns`: Placeholder CLI package for future project scaffolding.
 - `docs`: Architecture, local setup, and extension guidance.
 
 ## Playwright template layers

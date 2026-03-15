@@ -1,5 +1,5 @@
 {
-  "name": "test-framework-patterns",
+  "name": "qa-patterns",
   "version": "1.0.0",
   "private": true,
   "description": "Pattern library for modern test automation frameworks and deterministic reference applications.",
@@ -7,7 +7,7 @@
     "templates/playwright-template",
     "test-apps/ui-demo-app",
     "test-apps/api-demo-server",
-    "tools/create-test-framework-patterns"
+    "tools/create-qa-patterns"
   ],
   "scripts": {
     "dev:ui": "npm run dev --workspace @toolstackhq/ui-demo-app",
@@ -17,7 +17,7 @@
     "test:regression": "npm run test:regression --workspace @toolstackhq/playwright-template",
     "lint": "npm run lint --workspace @toolstackhq/playwright-template",
     "typecheck": "npm run typecheck --workspace @toolstackhq/playwright-template",
-    "cli": "npm run start --workspace @toolstackhq/create-test-framework-patterns"
+    "cli": "npm run start --workspace @toolstackhq/create-qa-patterns"
   },
   "engines": {
     "node": ">=18.18.0"

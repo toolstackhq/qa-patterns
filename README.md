@@ -1,6 +1,6 @@
-# test-framework-patterns
+# qa-patterns
 
-`test-framework-patterns` is a pattern library for modern automation testing frameworks and deterministic reference applications.
+`qa-patterns` is a pattern library for modern automation testing frameworks and deterministic reference applications.
 
 It includes:
 
@@ -12,7 +12,7 @@ It includes:
 ## Repository layout
 
 ```text
-test-framework-patterns
+qa-patterns
 ├── .github/workflows
 ├── docs
 ├── templates
@@ -21,7 +21,7 @@ test-framework-patterns
 │   ├── api-demo-server
 │   └── ui-demo-app
 ├── tools
-│   └── create-test-framework-patterns
+│   └── create-qa-patterns
 ├── package.json
 └── README.md
 ```
@@ -70,8 +70,8 @@ This repository is meant to be used in two ways:
 The future CLI package is the distribution point for scaffolded starters:
 
 ```bash
-npm install -g @toolstackhq/create-test-framework-patterns
-create-test-framework-patterns
+npm install -g @toolstackhq/create-qa-patterns
+create-qa-patterns
 ```
 
 Today the CLI is a placeholder. The repository itself is the primary usable artifact.
@@ -80,14 +80,14 @@ Today the CLI is a placeholder. The repository itself is the primary usable arti
 
 The repository now follows the same release approach used in `mockit` for the publishable CLI package:
 
-1. Update [`tools/create-test-framework-patterns/package.json`](./tools/create-test-framework-patterns/package.json) with the next version.
+1. Update [`tools/create-qa-patterns/package.json`](./tools/create-qa-patterns/package.json) with the next version.
 2. Commit the change to `main`.
 3. Create and push a matching git tag such as `v0.1.0`.
 4. GitHub Actions runs [`release-publish.yml`](./.github/workflows/release-publish.yml), validates the tag against the CLI package version, packs the artifact, publishes to npm with provenance, and creates a GitHub release.
 
 Required secret:
 
-- `NPM_TOKEN` with publish access for `@toolstackhq/create-test-framework-patterns`
+- `NPM_TOKEN` with publish access for `@toolstackhq/create-qa-patterns`
 
 ## What the Playwright template demonstrates
 
@@ -114,4 +114,4 @@ Required secret:
 
 - The UI demo app and API demo server both keep state in memory for deterministic runs.
 - The root GitHub Actions workflow runs the Playwright template against the bundled demo applications.
-- The `tools/create-test-framework-patterns` package is a future scaffolding entrypoint.
+- The `tools/create-qa-patterns` package is a future scaffolding entrypoint.

@@ -1,15 +1,15 @@
 {
-  "name": "@toolstackhq/create-test-framework-patterns",
+  "name": "@toolstackhq/create-qa-patterns",
   "version": "0.1.0",
   "description": "Placeholder CLI for future test framework scaffolding.",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/toolstackhq/test-framework-patterns.git"
+    "url": "git+https://github.com/toolstackhq/qa-patterns.git"
   },
-  "homepage": "https://github.com/toolstackhq/test-framework-patterns",
+  "homepage": "https://github.com/toolstackhq/qa-patterns",
   "bugs": {
-    "url": "https://github.com/toolstackhq/test-framework-patterns/issues"
+    "url": "https://github.com/toolstackhq/qa-patterns/issues"
   },
   "publishConfig": {
     "access": "public"
@@ -20,7 +20,7 @@
     "LICENSE"
   ],
   "bin": {
-    "create-test-framework-patterns": "./index.js"
+    "create-qa-patterns": "./index.js"
   },
   "scripts": {
     "start": "node ./index.js",

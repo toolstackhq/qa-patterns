@@ -1,6 +1,6 @@
-# @toolstackhq/create-test-framework-patterns
+# @toolstackhq/create-qa-patterns
 
-This package is the future scaffolding entrypoint for the `test-framework-patterns` repository.
+This package is the future scaffolding entrypoint for the `qa-patterns` repository.
 
 ## Current status
 
@@ -9,8 +9,8 @@ The package is intentionally minimal today. It exists so the repository can rese
 ## Usage
 
 ```bash
-npm install -g @toolstackhq/create-test-framework-patterns
-create-test-framework-patterns
+npm install -g @toolstackhq/create-qa-patterns
+create-qa-patterns
 ```
 
 Current output:

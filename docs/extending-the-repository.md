@@ -23,8 +23,8 @@
 
 ## Future CLI direction
 
-The `create-test-framework-patterns` package is intentionally minimal today. It is the reserved integration point for future commands such as:
+The `create-qa-patterns` package is intentionally minimal today. It is the reserved integration point for future commands such as:
 
-- `create-test-framework-patterns playwright`
-- `create-test-framework-patterns api`
-- `create-test-framework-patterns demo-app`
+- `create-qa-patterns playwright`
+- `create-qa-patterns api`
+- `create-qa-patterns demo-app`
