@@ -11,7 +11,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "report:playwright": "playwright show-report reports/html",
-    "report:allure": "bash ./scripts/generate-allure-report.sh",
+    "report:allure": "node ./scripts/generate-allure-report.mjs",
     "report:allure:open": "allure open reports/allure",
     "ci": "bash ./scripts/run-tests.sh"
   },

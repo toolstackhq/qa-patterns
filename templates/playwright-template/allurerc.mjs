@@ -1,6 +1,4 @@
-import { defineConfig } from "allure";
-
-export default defineConfig({
+export default {
   name: "qa-patterns Playwright Template",
   plugins: {
     awesome: {
@@ -9,4 +7,4 @@ export default defineConfig({
       }
     }
   }
-});
+};
