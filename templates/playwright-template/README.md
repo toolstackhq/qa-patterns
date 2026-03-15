@@ -43,7 +43,8 @@ playwright-template
 
 - The default report remains Playwright's HTML reporter at `reports/html`.
 - Allure is also wired in and writes raw execution data to `allure-results`.
-- Generate the richer Allure report with `npm run report:allure`.
+- Generate the richer single-file Allure report with `npm run report:allure`.
+- The generated Allure report is written to `reports/allure/index.html`.
 - Open the generated reports with `npm run report:playwright` or `npm run report:allure:open`.
 - If you do not want Allure, remove the `allure-playwright` reporter line in [`playwright.config.ts`](./playwright.config.ts).
 
