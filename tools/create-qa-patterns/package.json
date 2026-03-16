@@ -1,7 +1,7 @@
 {
   "name": "@toolstackhq/create-qa-patterns",
-  "version": "1.0.0",
-  "description": "Placeholder CLI for future test framework scaffolding.",
+  "version": "1.0.1",
+  "description": "CLI for generating QA framework templates.",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -16,6 +16,7 @@
   },
   "files": [
     "index.js",
+    "templates",
     "README.md",
     "LICENSE"
   ],
@@ -24,6 +25,6 @@
   },
   "scripts": {
     "start": "node ./index.js",
-    "test": "node ./index.js"
+    "test": "node ./index.js --help"
   }
 }

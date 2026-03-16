@@ -14,10 +14,18 @@ npm install -g @toolstackhq/create-qa-patterns
 create-qa-patterns
 ```
 
+Generate into a new directory:
+
+```bash
+create-qa-patterns my-project
+```
+
+Generate the Playwright template explicitly:
+
+```bash
+create-qa-patterns playwright-template my-project
+```
+
 ## Supported templates
-
-The generator command is not enabled in the current release.
-
-Planned first template:
 
 - `playwright-template`
