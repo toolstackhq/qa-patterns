@@ -50,3 +50,5 @@ The CLI checks:
 - `npm` availability for install and test actions
 - `npx` availability for Playwright browser installation
 - `docker` availability and warns if it is missing
+
+If `npx playwright install` fails because the host is missing browser dependencies, the CLI keeps the generated project and prints the recovery steps instead of treating scaffold generation as failed.

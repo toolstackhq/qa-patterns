@@ -444,6 +444,26 @@ function getCommandName(base) {
   return base;
 }
 
+function printPlaywrightInstallRecovery(targetDirectory) {
+  process.stdout.write(`
+Playwright browser installation did not complete.
+
+Common cause:
+  Missing OS packages required to run Playwright browsers.
+
+Recommended next steps:
+  cd ${path.relative(process.cwd(), targetDirectory) || "."}
+  sudo npx playwright install-deps
+  npx playwright install
+
+If you already know the missing package name, install it with your system package manager and then rerun:
+  npx playwright install
+
+The template was generated successfully. You can complete browser setup later.
+
+`);
+}
+
 function runCommand(command, args, cwd) {
   return new Promise((resolve, reject) => {
     const child = spawn(getCommandName(command), args, {
@@ -509,7 +529,17 @@ async function runPostGenerateActions(targetDirectory) {
     const shouldInstallPlaywright = await askYesNo("Run npx playwright install now?", true);
 
     if (shouldInstallPlaywright) {
-      await runCommand("npx", ["playwright", "install"], targetDirectory);
+      try {
+        await runCommand("npx", ["playwright", "install"], targetDirectory);
+      } catch (error) {
+        printPlaywrightInstallRecovery(targetDirectory);
+
+        const shouldContinue = await askYesNo("Continue without completing Playwright browser install?", true);
+
+        if (!shouldContinue) {
+          throw error;
+        }
+      }
     }
   } else {
     process.stdout.write("Skipping Playwright browser install prompt because npx is not available.\n");
