@@ -3,9 +3,14 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const readline = require("node:readline");
-const { spawn } = require("node:child_process");
+const { spawn, spawnSync } = require("node:child_process");
 
 const DEFAULT_TEMPLATE = "playwright-template";
+const MIN_NODE_VERSION = {
+  major: 18,
+  minor: 18,
+  patch: 0
+};
 const DEFAULT_GITIGNORE = `node_modules/
 
 .env
@@ -53,6 +58,39 @@ Supported templates:
 `);
 }
 
+function parseNodeVersion(version) {
+  const normalized = version.replace(/^v/, "");
+  const [major = "0", minor = "0", patch = "0"] = normalized.split(".");
+
+  return {
+    major: Number.parseInt(major, 10),
+    minor: Number.parseInt(minor, 10),
+    patch: Number.parseInt(patch, 10)
+  };
+}
+
+function isNodeVersionSupported(version) {
+  if (version.major !== MIN_NODE_VERSION.major) {
+    return version.major > MIN_NODE_VERSION.major;
+  }
+
+  if (version.minor !== MIN_NODE_VERSION.minor) {
+    return version.minor > MIN_NODE_VERSION.minor;
+  }
+
+  return version.patch >= MIN_NODE_VERSION.patch;
+}
+
+function assertSupportedNodeVersion() {
+  const currentVersion = parseNodeVersion(process.version);
+
+  if (!isNodeVersionSupported(currentVersion)) {
+    throw new Error(
+      `Node ${MIN_NODE_VERSION.major}.${MIN_NODE_VERSION.minor}.${MIN_NODE_VERSION.patch}+ is required. Current version: ${process.version}`
+    );
+  }
+}
+
 function resolveTemplate(value) {
   return TEMPLATE_ALIASES.get(value);
 }
@@ -63,6 +101,40 @@ function getTemplate(templateId) {
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function commandExists(command) {
+  const result = spawnSync(getCommandName(command), ["--version"], {
+    stdio: "ignore"
+  });
+
+  return !result.error && result.status === 0;
+}
+
+function collectPrerequisites() {
+  return {
+    npm: commandExists("npm"),
+    npx: commandExists("npx"),
+    docker: commandExists("docker")
+  };
+}
+
+function printPrerequisiteWarnings(prerequisites) {
+  if (!prerequisites.npm) {
+    process.stdout.write("Warning: npm was not found. Automated install and test steps will be unavailable.\n");
+  }
+
+  if (!prerequisites.npx) {
+    process.stdout.write("Warning: npx was not found. Playwright browser installation will be unavailable.\n");
+  }
+
+  if (!prerequisites.docker) {
+    process.stdout.write("Warning: docker was not found. Docker-based template flows will not run until Docker is installed.\n");
+  }
+
+  if (!prerequisites.npm || !prerequisites.npx || !prerequisites.docker) {
+    process.stdout.write("\n");
+  }
 }
 
 function createLineInterface() {
@@ -421,27 +493,43 @@ async function runPostGenerateActions(targetDirectory) {
     return;
   }
 
-  const shouldInstallDependencies = await askYesNo("Run npm install now?", true);
+  const prerequisites = collectPrerequisites();
 
-  if (shouldInstallDependencies) {
-    await runCommand("npm", ["install"], targetDirectory);
+  if (prerequisites.npm) {
+    const shouldInstallDependencies = await askYesNo("Run npm install now?", true);
+
+    if (shouldInstallDependencies) {
+      await runCommand("npm", ["install"], targetDirectory);
+    }
+  } else {
+    process.stdout.write("Skipping npm install prompt because npm is not available.\n");
   }
 
-  const shouldInstallPlaywright = await askYesNo("Run npx playwright install now?", true);
+  if (prerequisites.npx) {
+    const shouldInstallPlaywright = await askYesNo("Run npx playwright install now?", true);
 
-  if (shouldInstallPlaywright) {
-    await runCommand("npx", ["playwright", "install"], targetDirectory);
+    if (shouldInstallPlaywright) {
+      await runCommand("npx", ["playwright", "install"], targetDirectory);
+    }
+  } else {
+    process.stdout.write("Skipping Playwright browser install prompt because npx is not available.\n");
   }
 
-  const shouldRunTests = await askYesNo("Run npm test now?", false);
+  if (prerequisites.npm) {
+    const shouldRunTests = await askYesNo("Run npm test now?", false);
 
-  if (shouldRunTests) {
-    await runCommand("npm", ["test"], targetDirectory);
+    if (shouldRunTests) {
+      await runCommand("npm", ["test"], targetDirectory);
+    }
+  } else {
+    process.stdout.write("Skipping npm test prompt because npm is not available.\n");
   }
 }
 
 async function main() {
   const args = process.argv.slice(2);
+
+  assertSupportedNodeVersion();
 
   if (args.includes("--help") || args.includes("-h")) {
     printHelp();
@@ -449,6 +537,7 @@ async function main() {
   }
 
   const { templateName, targetDirectory, generatedInCurrentDirectory } = await resolveScaffoldArgs(args);
+  printPrerequisiteWarnings(collectPrerequisites());
   await scaffoldProject(templateName, targetDirectory);
   printSuccess(templateName, targetDirectory, generatedInCurrentDirectory);
   await runPostGenerateActions(targetDirectory);

@@ -41,3 +41,12 @@ When run in a terminal, the CLI shows:
   - `npm install`
   - `npx playwright install`
   - `npm test`
+
+## Prerequisite checks
+
+The CLI checks:
+
+- required Node.js version
+- `npm` availability for install and test actions
+- `npx` availability for Playwright browser installation
+- `docker` availability and warns if it is missing
