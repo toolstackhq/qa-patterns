@@ -2,12 +2,47 @@
 
 `qa-patterns` is a repository of reusable test automation patterns.
 
+It gives teams a clean starting point for building automation frameworks without having to invent the structure from scratch.
+
 It currently includes:
 
 - a Playwright + TypeScript framework template
 - a deterministic UI demo app for browser testing
 - a deterministic API demo server for API testing
 - CI, linting, reporting, and extension patterns
+
+## Why this repo exists
+
+Most automation repositories either start too bare or become too complex too quickly.
+
+This repository aims for a middle ground:
+
+- simple enough to understand quickly
+- structured enough to scale
+- realistic enough to reuse in real projects
+- deterministic enough to run repeatedly in CI
+
+## Feature set
+
+- workflow-first Playwright tests instead of selector-heavy scripts
+- page objects that own all locators
+- shared fixtures for runtime config, pages, logging, and test data
+- generic data factories so tests stay readable
+- multi-environment config with `dev`, `staging`, and `prod`
+- env-based secret resolution with a replaceable secret provider model
+- built-in Playwright HTML reporting
+- optional single-file Allure reporting
+- structured execution logs for CI diagnostics
+- lint rules that protect the framework shape
+- Docker and GitHub Actions support
+
+## How it works
+
+- the demo apps provide predictable UI and API targets
+- the Playwright template reads environment and secret values at runtime
+- tests run against whatever app URLs and credentials match `TEST_ENV`
+- page objects keep selector logic out of test files
+- reports, traces, screenshots, videos, and logs are saved for local debugging and CI
 
 ## Quick start
 
@@ -32,18 +67,6 @@ npm run dev:api
 ```bash
 npm test
 ```
-
-## What the framework includes
-
-- page objects with selectors kept out of test files
-- reusable fixtures for config, logging, data, and pages
-- generic test data with `DataFactory`
-- environment-aware runtime config with `TEST_ENV=dev|staging|prod`
-- env-based secret resolution through a `SecretManager`
-- Playwright HTML reporting by default
-- optional Allure single-file reporting
-- ESLint rules to protect framework conventions
-- GitHub Actions and Docker support for CI
 
 ## Main commands
 
