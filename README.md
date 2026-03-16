@@ -105,7 +105,6 @@ npm run report:allure
 - [Framework architecture](./docs/architecture.md)
 - [Reporting](./docs/reporting.md)
 - [CI and quality checks](./docs/ci-and-quality.md)
-- [Dependency automation](./docs/dependency-automation.md)
 - [Security and secrets](./docs/security.md)
 - [Playwright template package](./templates/playwright-template/README.md)
 
