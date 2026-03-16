@@ -538,16 +538,40 @@ Generated ${template ? template.label : templateName} in ${targetDirectory}
   }
 }
 
-function printNextSteps(targetDirectory, generatedInCurrentDirectory) {
-  process.stdout.write(`${colors.cyan("Next steps:")}\n`);
+function printNextSteps(summary) {
+  const steps = [];
 
-  if (!generatedInCurrentDirectory) {
-    process.stdout.write(`  cd ${path.relative(process.cwd(), targetDirectory) || "."}\n`);
+  if (!summary.generatedInCurrentDirectory) {
+    steps.push(`cd ${path.relative(process.cwd(), summary.targetDirectory) || "."}`);
   }
 
-  process.stdout.write("  npm install\n");
-  process.stdout.write("  npx playwright install\n");
-  process.stdout.write("  npm test\n");
+  if (summary.npmInstall !== "completed") {
+    steps.push("npm install");
+  }
+
+  if (summary.playwrightInstall !== "completed") {
+    steps.push("npx playwright install");
+  }
+
+  if (summary.testRun !== "completed") {
+    steps.push("npm test");
+  }
+
+  if (steps.length > 0) {
+    process.stdout.write(`${colors.cyan("Next steps:")}\n`);
+    for (const step of steps) {
+      process.stdout.write(`  ${step}\n`);
+    }
+    process.stdout.write("\n");
+  }
+
+  if (summary.demoAppsManagedByTemplate) {
+    process.stdout.write(
+      `${colors.yellow(colors.bold("Demo apps included:"))} sample tests run against bundled demo apps in local ${colors.bold("dev")}. Delete or replace ${colors.bold("demo-apps/")} if you do not want them.\n`
+    );
+  }
+
+  process.stdout.write(`${colors.green(colors.bold("Happy testing."))}\n`);
 }
 
 function formatStatus(status) {
@@ -655,7 +679,7 @@ async function main() {
   printSuccess(templateName, targetDirectory, generatedInCurrentDirectory);
   await runPostGenerateActions(targetDirectory, summary);
   printSummary(summary);
-  printNextSteps(targetDirectory, generatedInCurrentDirectory);
+  printNextSteps(summary);
 }
 
 main().catch((error) => {
