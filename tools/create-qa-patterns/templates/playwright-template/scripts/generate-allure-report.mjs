@@ -24,10 +24,18 @@ const collectResultFiles = async () => {
 };
 
 const generateReport = async () => {
+  try {
+    await stat(resultsDir);
+  } catch {
+    process.stdout.write("Skipping Allure report generation because allure-results does not exist.\n");
+    return;
+  }
+
   const files = await collectResultFiles();
 
   if (files.length === 0) {
-    throw new Error("No Allure result files found in allure-results. Run the tests before generating a report.");
+    process.stdout.write("Skipping Allure report generation because no result files were found.\n");
+    return;
   }
 
   await rm(outputDir, { force: true, recursive: true });
