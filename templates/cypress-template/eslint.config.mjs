@@ -2,6 +2,8 @@ import js from "@eslint/js";
 import tsParser from "@typescript-eslint/parser";
 import tsPlugin from "@typescript-eslint/eslint-plugin";
 
+const tsconfigRootDir = import.meta.dirname;
+
 const cypressGlobals = {
   Cypress: "readonly",
   cy: "readonly",
@@ -25,10 +27,12 @@ export default [
   js.configs.recommended,
   {
     files: ["**/*.ts"],
+    ignores: ["**/*.d.ts"],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
-        project: "./tsconfig.json"
+        project: "./tsconfig.json",
+        tsconfigRootDir
       },
       globals: {
         ...cypressGlobals,
@@ -48,6 +52,22 @@ export default [
           varsIgnorePattern: "^_"
         }
       ]
+    }
+  },
+  {
+    files: ["**/*.d.ts"],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        tsconfigRootDir
+      },
+      globals: {
+        ...cypressGlobals,
+        ...nodeGlobals
+      }
+    },
+    rules: {
+      "no-undef": "off"
     }
   },
   {
