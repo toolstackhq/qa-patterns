@@ -23,6 +23,20 @@ Examples:
 - `DEV_APP_USERNAME`, then `APP_USERNAME`
 - `DEV_APP_PASSWORD`, then `APP_PASSWORD`
 - `DEV_UI_BASE_URL`, then `UI_BASE_URL`
+- `DEV_API_BASE_URL`, then `API_BASE_URL`
+
+If no environment variable is present, the template falls back to the defaults defined in:
+
+```bash
+templates/playwright-template/config/environments.ts
+```
+
+That means the tests always need two things:
+
+- reachable application endpoints
+- credentials that match the selected environment
+
+If the endpoints or credentials do not match `TEST_ENV`, the tests will fail even though the framework itself is configured correctly.
 
 ## Local `.env`
 
