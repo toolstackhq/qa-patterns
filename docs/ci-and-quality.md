@@ -15,6 +15,14 @@ It does two kinds of validation:
 
 That means the Docker path is tested continuously, not just included as a sample.
 
+There is also a lightweight scheduled watcher:
+
+```bash
+.github/workflows/dependency-watch.yml
+```
+
+It runs weekly and by manual dispatch. It checks whether `@playwright/test` is behind the latest stable version and whether `npm audit` reports vulnerabilities. When something needs attention, it creates or updates a GitHub issue titled `Dependency watch alert`.
+
 ## CI entrypoint
 
 The Playwright template CI command is:

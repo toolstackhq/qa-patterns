@@ -1,0 +1,126 @@
+name: Dependency Watch
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 5 * * 1"
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: dependency-watch
+  cancel-in-progress: false
+
+jobs:
+  dependency-watch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install workspace dependencies
+        run: npm ci
+
+      - name: Check Playwright version and vulnerabilities
+        id: watch
+        run: node .github/scripts/dependency-watch.mjs
+
+      - name: Write workflow summary
+        run: |
+          {
+            echo "## Dependency Watch"
+            echo
+            echo "- Current \`@playwright/test\`: ${{ steps.watch.outputs.playwright_current_version }}"
+            echo "- Latest \`@playwright/test\`: ${{ steps.watch.outputs.playwright_latest_version }}"
+            echo "- Playwright update available: ${{ steps.watch.outputs.playwright_update_available }}"
+            echo "- Vulnerabilities total: ${{ steps.watch.outputs.vulnerabilities_total }}"
+            echo "- Critical: ${{ steps.watch.outputs.vulnerabilities_critical }}"
+            echo "- High: ${{ steps.watch.outputs.vulnerabilities_high }}"
+            echo "- Moderate: ${{ steps.watch.outputs.vulnerabilities_moderate }}"
+            echo "- Low: ${{ steps.watch.outputs.vulnerabilities_low }}"
+            echo "- Info: ${{ steps.watch.outputs.vulnerabilities_info }}"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Create or update dependency watch issue
+        if: steps.watch.outputs.should_notify == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = "Dependency watch alert";
+            const body = [
+              "## Dependency watch alert",
+              "",
+              `- Current \`@playwright/test\`: ${{ steps.watch.outputs.playwright_current_version }}`,
+              `- Latest \`@playwright/test\`: ${{ steps.watch.outputs.playwright_latest_version }}`,
+              `- Playwright update available: ${{ steps.watch.outputs.playwright_update_available }}`,
+              "",
+              "## npm audit summary",
+              "",
+              `- Total: ${{ steps.watch.outputs.vulnerabilities_total }}`,
+              `- Critical: ${{ steps.watch.outputs.vulnerabilities_critical }}`,
+              `- High: ${{ steps.watch.outputs.vulnerabilities_high }}`,
+              `- Moderate: ${{ steps.watch.outputs.vulnerabilities_moderate }}`,
+              `- Low: ${{ steps.watch.outputs.vulnerabilities_low }}`,
+              `- Info: ${{ steps.watch.outputs.vulnerabilities_info }}`,
+              "",
+              "This issue is maintained by `.github/workflows/dependency-watch.yml`."
+            ].join("\n");
+
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "open",
+              per_page: 100
+            });
+
+            const existing = issues.find((issue) => issue.title === title);
+
+            if (existing) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.number,
+                body
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+                labels: ["dependencies"]
+              });
+            }
+
+      - name: Close dependency watch issue when clean
+        if: steps.watch.outputs.should_notify != 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = "Dependency watch alert";
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "open",
+              per_page: 100
+            });
+
+            const existing = issues.find((issue) => issue.title === title);
+
+            if (existing) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.number,
+                state: "closed"
+              });
+            }
