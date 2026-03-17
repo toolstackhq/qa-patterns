@@ -13,6 +13,7 @@ This is a Playwright + TypeScript automation framework template for UI and API t
 - [Reports and artifacts](#reports-and-artifacts)
 - [Add a new test](#add-a-new-test)
 - [Extend the framework](#extend-the-framework)
+- [Template upgrades](#template-upgrades)
 - [CI and Docker](#ci-and-docker)
 
 ## Feature set
@@ -227,6 +228,24 @@ Recommended rules:
 - keep assertions in test files
 - prefer semantic selectors such as `getByRole`, `getByLabel`, and `data-testid`
 - keep the data layer generic until the project really needs domain-specific factories
+
+## Template upgrades
+
+This project includes a `.qa-patterns.json` metadata file so future CLI versions can compare the current project against the managed template baseline.
+
+Check for available safe updates:
+
+```bash
+npx -y @toolstackhq/create-qa-patterns upgrade check .
+```
+
+Apply only safe managed-file updates:
+
+```bash
+npx -y @toolstackhq/create-qa-patterns upgrade apply --safe .
+```
+
+The upgrade flow is conservative. It updates framework infrastructure such as config, scripts, workflows, and package metadata when those files are still unchanged from the generated baseline. If you changed a managed file yourself, the CLI reports a conflict instead of overwriting it.
 
 ## CI and Docker
 

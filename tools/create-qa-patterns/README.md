@@ -40,6 +40,24 @@ Generate without post-create prompts, which is useful for CI or scripted setup:
 create-qa-patterns playwright-template my-project --yes --no-install --no-setup --no-test
 ```
 
+## Upgrade a generated project
+
+Generated projects now include a `.qa-patterns.json` metadata file. It tracks the last applied managed template baseline so the CLI can update infrastructure files conservatively later.
+
+Check for safe updates:
+
+```bash
+create-qa-patterns upgrade check my-project
+```
+
+Apply only safe managed-file updates:
+
+```bash
+create-qa-patterns upgrade apply --safe my-project
+```
+
+The upgrade flow intentionally avoids overwriting user-owned test and page code. It only manages framework infrastructure such as config, scripts, workflows, and package metadata when those files are still unchanged from the generated baseline.
+
 ## Supported templates
 
 - `playwright-template`

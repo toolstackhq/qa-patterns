@@ -3,9 +3,12 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const readline = require("node:readline");
+const crypto = require("node:crypto");
 const { spawn, spawnSync } = require("node:child_process");
 
 const DEFAULT_TEMPLATE = "playwright-template";
+const CLI_PACKAGE = require("./package.json");
+const METADATA_FILENAME = ".qa-patterns.json";
 const MIN_NODE_VERSION = {
   major: 18,
   minor: 18,
@@ -41,6 +44,30 @@ allure-report/
 test-results/
 playwright-report/
 `;
+
+const MANAGED_FILE_PATTERNS = {
+  common: [
+    ".env.example",
+    ".gitignore",
+    "package.json",
+    "package-lock.json",
+    "tsconfig.json",
+    "eslint.config.mjs",
+    "allurerc.mjs",
+    "config/**",
+    "scripts/**",
+    ".github/**"
+  ],
+  "playwright-template": [
+    "playwright.config.ts",
+    "docker/**",
+    "lint/**",
+    "reporters/**",
+    "utils/logger.ts",
+    "utils/test-step.ts"
+  ],
+  "cypress-template": ["cypress.config.ts"]
+};
 
 const TEMPLATES = [
   {
@@ -109,6 +136,222 @@ const colors = {
   }
 };
 
+function sha256(content) {
+  return crypto.createHash("sha256").update(content).digest("hex");
+}
+
+function normalizePath(value) {
+  return value.split(path.sep).join("/");
+}
+
+function getTemplateDirectory(templateId) {
+  return path.resolve(__dirname, "templates", templateId);
+}
+
+function pathMatchesPattern(relativePath, pattern) {
+  if (pattern.endsWith("/**")) {
+    const prefix = pattern.slice(0, -3);
+    return relativePath === prefix || relativePath.startsWith(`${prefix}/`);
+  }
+
+  return relativePath === pattern;
+}
+
+function isManagedFile(template, relativePath) {
+  const patterns = [...MANAGED_FILE_PATTERNS.common, ...(MANAGED_FILE_PATTERNS[template.id] || [])];
+  return patterns.some((pattern) => pathMatchesPattern(relativePath, pattern));
+}
+
+function collectRelativeFiles(rootDirectory) {
+  const results = [];
+
+  function visit(currentDirectory) {
+    const entries = fs.readdirSync(currentDirectory, { withFileTypes: true });
+
+    for (const entry of entries) {
+      const absolutePath = path.join(currentDirectory, entry.name);
+      const relativePath = normalizePath(path.relative(rootDirectory, absolutePath));
+
+      if (entry.isDirectory()) {
+        visit(absolutePath);
+      } else {
+        results.push(relativePath);
+      }
+    }
+  }
+
+  visit(rootDirectory);
+
+  return results.sort();
+}
+
+function transformTemplateFile(relativePath, content, targetDirectory, template) {
+  const packageName = toPackageName(targetDirectory, template);
+
+  if (relativePath === "package.json") {
+    const pkg = JSON.parse(content);
+    return `${JSON.stringify({ ...pkg, name: packageName }, null, 2)}\n`;
+  }
+
+  if (relativePath === "package-lock.json") {
+    const lock = JSON.parse(content);
+    return `${JSON.stringify(
+      {
+        ...lock,
+        name: packageName,
+        packages: lock.packages
+          ? {
+              ...lock.packages,
+              "": {
+                ...lock.packages[""],
+                name: packageName
+              }
+            }
+          : lock.packages
+      },
+      null,
+      2
+    )}\n`;
+  }
+
+  return content;
+}
+
+function renderTemplateFile(template, relativePath, targetDirectory) {
+  if (relativePath === ".gitignore") {
+    const gitignorePath = path.join(getTemplateDirectory(template.id), ".gitignore");
+    const gitignoreContent = fs.existsSync(gitignorePath) ? fs.readFileSync(gitignorePath, "utf8") : DEFAULT_GITIGNORE;
+    return transformTemplateFile(relativePath, gitignoreContent, targetDirectory, template);
+  }
+
+  const sourcePath = path.join(getTemplateDirectory(template.id), relativePath);
+  const content = fs.readFileSync(sourcePath, "utf8");
+  return transformTemplateFile(relativePath, content, targetDirectory, template);
+}
+
+function getManagedRelativePaths(template) {
+  const templateDirectory = getTemplateDirectory(template.id);
+  const templateFiles = collectRelativeFiles(templateDirectory).filter((relativePath) => isManagedFile(template, relativePath));
+  const managedFiles = new Set(templateFiles);
+  managedFiles.add(".gitignore");
+  managedFiles.delete(METADATA_FILENAME);
+  return [...managedFiles].sort();
+}
+
+function getMetadataPath(targetDirectory) {
+  return path.join(targetDirectory, METADATA_FILENAME);
+}
+
+function buildProjectMetadata(template, targetDirectory) {
+  const managedFiles = {};
+
+  for (const relativePath of getManagedRelativePaths(template)) {
+    const absolutePath = path.join(targetDirectory, relativePath);
+    if (!fs.existsSync(absolutePath)) {
+      continue;
+    }
+
+    managedFiles[relativePath] = {
+      baselineHash: sha256(fs.readFileSync(absolutePath, "utf8"))
+    };
+  }
+
+  return {
+    schemaVersion: 1,
+    template: template.id,
+    templateVersion: CLI_PACKAGE.version,
+    packageName: toPackageName(targetDirectory, template),
+    generatedAt: new Date().toISOString(),
+    managedFiles
+  };
+}
+
+function writeProjectMetadata(template, targetDirectory, existingMetadata) {
+  const nextMetadata = buildProjectMetadata(template, targetDirectory);
+
+  if (existingMetadata) {
+    nextMetadata.generatedAt = existingMetadata.generatedAt || nextMetadata.generatedAt;
+    nextMetadata.templateVersion = existingMetadata.templateVersion || nextMetadata.templateVersion;
+  }
+
+  fs.writeFileSync(getMetadataPath(targetDirectory), `${JSON.stringify(nextMetadata, null, 2)}\n`, "utf8");
+  return nextMetadata;
+}
+
+function readProjectMetadata(targetDirectory) {
+  const metadataPath = getMetadataPath(targetDirectory);
+
+  if (!fs.existsSync(metadataPath)) {
+    throw new Error(`No ${METADATA_FILENAME} file found in ${targetDirectory}.`);
+  }
+
+  return JSON.parse(fs.readFileSync(metadataPath, "utf8"));
+}
+
+function detectTemplateFromProject(targetDirectory) {
+  const metadataPath = getMetadataPath(targetDirectory);
+  if (fs.existsSync(metadataPath)) {
+    const metadata = JSON.parse(fs.readFileSync(metadataPath, "utf8"));
+    return metadata.template;
+  }
+
+  if (fs.existsSync(path.join(targetDirectory, "playwright.config.ts"))) {
+    return "playwright-template";
+  }
+
+  if (fs.existsSync(path.join(targetDirectory, "cypress.config.ts"))) {
+    return "cypress-template";
+  }
+
+  throw new Error(`Could not detect the template used for ${targetDirectory}.`);
+}
+
+function analyzeUpgrade(template, targetDirectory, metadata) {
+  const managedPaths = getManagedRelativePaths(template);
+  const results = [];
+
+  for (const relativePath of managedPaths) {
+    const absolutePath = path.join(targetDirectory, relativePath);
+    const latestContent = renderTemplateFile(template, relativePath, targetDirectory);
+    const latestHash = sha256(latestContent);
+    const baselineHash = metadata.managedFiles?.[relativePath]?.baselineHash || null;
+    const currentExists = fs.existsSync(absolutePath);
+    const currentHash = currentExists ? sha256(fs.readFileSync(absolutePath, "utf8")) : null;
+
+    let status = "up-to-date";
+
+    if (!baselineHash) {
+      if (!currentExists) {
+        status = "new-file";
+      } else if (currentHash === latestHash) {
+        status = "new-file";
+      } else {
+        status = "conflict";
+      }
+    } else if (!currentExists) {
+      status = "conflict";
+    } else if (currentHash === latestHash) {
+      status = "up-to-date";
+    } else if (currentHash === baselineHash) {
+      status = "safe-update";
+    } else {
+      status = "conflict";
+    }
+
+    results.push({
+      relativePath,
+      status,
+      latestContent,
+      latestHash,
+      currentHash,
+      baselineHash,
+      currentExists
+    });
+  }
+
+  return results;
+}
+
 function printHelp() {
   const supportedTemplates = TEMPLATES.map((template) => `  ${template.id}${template.aliases.length > 0 ? ` (${template.aliases.join(", ")})` : ""}`).join("\n");
 
@@ -119,6 +362,8 @@ Usage:
   create-qa-patterns <target-directory>
   create-qa-patterns <template> [target-directory]
   create-qa-patterns --template <template> [target-directory]
+  create-qa-patterns upgrade check [target-directory]
+  create-qa-patterns upgrade apply --safe [target-directory]
 
 Options:
   --yes          Accept all post-generate prompts
@@ -126,6 +371,7 @@ Options:
   --no-setup     Skip template-specific setup such as Playwright browser install
   --no-test      Skip npm test
   --template     Explicitly choose a template without using positional arguments
+  --safe         Required with upgrade apply; only updates unchanged managed files
 
 Interactive mode:
   When run without an explicit template, the CLI shows an interactive template picker.
@@ -141,6 +387,7 @@ function parseCliOptions(args) {
     noInstall: false,
     noSetup: false,
     noTest: false,
+    safe: false,
     templateName: null,
     positionalArgs: []
   };
@@ -160,6 +407,9 @@ function parseCliOptions(args) {
         break;
       case "--no-test":
         options.noTest = true;
+        break;
+      case "--safe":
+        options.safe = true;
         break;
       case "--template": {
         const templateValue = args[index + 1];
@@ -529,32 +779,24 @@ function updateJsonFile(filePath, update) {
 }
 
 function customizeProject(targetDirectory, template) {
-  const packageName = toPackageName(targetDirectory, template);
   const packageJsonPath = path.join(targetDirectory, "package.json");
   const packageLockPath = path.join(targetDirectory, "package-lock.json");
   const gitignorePath = path.join(targetDirectory, ".gitignore");
 
   if (fs.existsSync(packageJsonPath)) {
-    updateJsonFile(packageJsonPath, (pkg) => ({
-      ...pkg,
-      name: packageName
-    }));
+    fs.writeFileSync(
+      packageJsonPath,
+      transformTemplateFile("package.json", fs.readFileSync(packageJsonPath, "utf8"), targetDirectory, template),
+      "utf8"
+    );
   }
 
   if (fs.existsSync(packageLockPath)) {
-    updateJsonFile(packageLockPath, (lock) => ({
-      ...lock,
-      name: packageName,
-      packages: lock.packages
-        ? {
-            ...lock.packages,
-            "": {
-              ...lock.packages[""],
-              name: packageName
-            }
-          }
-        : lock.packages
-    }));
+    fs.writeFileSync(
+      packageLockPath,
+      transformTemplateFile("package-lock.json", fs.readFileSync(packageLockPath, "utf8"), targetDirectory, template),
+      "utf8"
+    );
   }
 
   if (!fs.existsSync(gitignorePath)) {
@@ -734,6 +976,85 @@ function formatStatus(status) {
   }
 }
 
+function formatUpgradeStatus(status) {
+  switch (status) {
+    case "safe-update":
+      return colors.green("safe update available");
+    case "new-file":
+      return colors.green("new managed file available");
+    case "conflict":
+      return colors.yellow("manual review required");
+    default:
+      return colors.dim("up to date");
+  }
+}
+
+function printUpgradeReport(targetDirectory, metadata, results) {
+  const safeCount = results.filter((entry) => entry.status === "safe-update").length;
+  const newCount = results.filter((entry) => entry.status === "new-file").length;
+  const conflictCount = results.filter((entry) => entry.status === "conflict").length;
+
+  process.stdout.write(`\n${colors.bold("Upgrade check")}\n`);
+  process.stdout.write(`  Target: ${targetDirectory}\n`);
+  process.stdout.write(`  Template: ${metadata.template}\n`);
+  process.stdout.write(`  Current baseline version: ${metadata.templateVersion}\n`);
+  process.stdout.write(`  CLI template version: ${CLI_PACKAGE.version}\n`);
+  process.stdout.write(`  Safe updates: ${safeCount}\n`);
+  process.stdout.write(`  New managed files: ${newCount}\n`);
+  process.stdout.write(`  Conflicts: ${conflictCount}\n\n`);
+
+  for (const entry of results) {
+    if (entry.status === "up-to-date") {
+      continue;
+    }
+
+    process.stdout.write(`  ${entry.relativePath}: ${formatUpgradeStatus(entry.status)}\n`);
+  }
+
+  if (safeCount === 0 && newCount === 0 && conflictCount === 0) {
+    process.stdout.write(`${colors.green("Everything already matches the current managed template files.")}\n`);
+  }
+
+  process.stdout.write("\n");
+}
+
+function applySafeUpdates(targetDirectory, metadata, results) {
+  const nextMetadata = {
+    ...metadata,
+    managedFiles: {
+      ...metadata.managedFiles
+    }
+  };
+
+  let appliedCount = 0;
+
+  for (const entry of results) {
+    if (!["safe-update", "new-file"].includes(entry.status)) {
+      continue;
+    }
+
+    const absolutePath = path.join(targetDirectory, entry.relativePath);
+    fs.mkdirSync(path.dirname(absolutePath), { recursive: true });
+    fs.writeFileSync(absolutePath, entry.latestContent, "utf8");
+    nextMetadata.managedFiles[entry.relativePath] = {
+      baselineHash: entry.latestHash
+    };
+    appliedCount += 1;
+  }
+
+  const remainingConflicts = results.filter((entry) => entry.status === "conflict").length;
+  if (remainingConflicts === 0) {
+    nextMetadata.templateVersion = CLI_PACKAGE.version;
+  }
+
+  fs.writeFileSync(getMetadataPath(targetDirectory), `${JSON.stringify(nextMetadata, null, 2)}\n`, "utf8");
+
+  process.stdout.write(`\n${colors.bold("Upgrade apply")}\n`);
+  process.stdout.write(`  Applied safe updates: ${appliedCount}\n`);
+  process.stdout.write(`  Remaining conflicts: ${remainingConflicts}\n`);
+  process.stdout.write("\n");
+}
+
 function printSummary(summary) {
   process.stdout.write(`\n${colors.bold("Summary")}\n`);
   process.stdout.write(`  Template: ${summary.template.id}\n`);
@@ -824,10 +1145,55 @@ async function runPostGenerateActions(template, targetDirectory, summary) {
   }
 }
 
+function resolveUpgradeTarget(args) {
+  if (args.length > 1) {
+    throw new Error("Too many arguments for upgrade. Use `create-qa-patterns upgrade check [target-directory]`.");
+  }
+
+  return path.resolve(process.cwd(), args[0] || ".");
+}
+
+function runUpgradeCommand(rawArgs) {
+  const [subcommand = "check", ...rest] = rawArgs;
+  const options = parseCliOptions(rest);
+  const targetDirectory = resolveUpgradeTarget(options.positionalArgs);
+  const metadata = readProjectMetadata(targetDirectory);
+  const templateId = metadata.template || detectTemplateFromProject(targetDirectory);
+  const template = getTemplate(templateId);
+
+  if (!template) {
+    throw new Error(`Unsupported template "${templateId}".`);
+  }
+
+  const results = analyzeUpgrade(template, targetDirectory, metadata);
+
+  if (subcommand === "check" || subcommand === "report") {
+    printUpgradeReport(targetDirectory, metadata, results);
+    return;
+  }
+
+  if (subcommand === "apply") {
+    if (!options.safe) {
+      throw new Error("Upgrade apply requires --safe. Only safe managed-file updates are supported.");
+    }
+
+    printUpgradeReport(targetDirectory, metadata, results);
+    applySafeUpdates(targetDirectory, metadata, results);
+    return;
+  }
+
+  throw new Error(`Unsupported upgrade command "${subcommand}". Use check, report, or apply --safe.`);
+}
+
 async function main() {
   const rawArgs = process.argv.slice(2);
 
   assertSupportedNodeVersion();
+
+  if (rawArgs[0] === "upgrade") {
+    runUpgradeCommand(rawArgs.slice(1));
+    return;
+  }
 
   if (rawArgs.includes("--help") || rawArgs.includes("-h")) {
     printHelp();
@@ -850,9 +1216,11 @@ async function main() {
   summary.options = options;
   printPrerequisiteWarnings(prerequisites);
   await scaffoldProject(template, targetDirectory, prerequisites);
+  writeProjectMetadata(template, targetDirectory);
   summary.gitInit = prerequisites.git ? "completed" : "unavailable";
   printSuccess(template, targetDirectory, generatedInCurrentDirectory);
   await runPostGenerateActions(template, targetDirectory, summary);
+  writeProjectMetadata(template, targetDirectory, readProjectMetadata(targetDirectory));
   printSummary(summary);
   printNextSteps(summary);
 }
