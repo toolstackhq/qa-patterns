@@ -22,7 +22,7 @@ const nodeGlobals = {
 
 export default [
   {
-    ignores: ["demo-apps/**", "node_modules/**", "reports/**"]
+    ignores: ["demo-apps/**", "node_modules/**", "reports/**", "allure-results/**", "allure-report/**"]
   },
   js.configs.recommended,
   {

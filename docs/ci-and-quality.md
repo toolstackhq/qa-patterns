@@ -13,6 +13,7 @@ It does two kinds of validation:
 - runs the Playwright template directly on the GitHub runner
 - builds and runs the Playwright Docker image
 - runs the Cypress template against its bundled UI demo app
+- generates optional Allure output for both framework templates
 
 That means both framework templates are validated continuously, and the Playwright Docker path is tested instead of drifting as a sample-only artifact.
 

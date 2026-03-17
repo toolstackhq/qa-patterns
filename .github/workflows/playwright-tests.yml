@@ -150,6 +150,11 @@ jobs:
           wait-on: "http://127.0.0.1:3000/health"
           command: npm run cy:run
 
+      - name: Generate Cypress Allure report
+        if: always()
+        working-directory: templates/cypress-template
+        run: npm run report:allure
+
       - name: Upload Cypress artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -157,3 +162,4 @@ jobs:
           name: cypress-template-artifacts
           path: |
             templates/cypress-template/reports
+            templates/cypress-template/allure-results

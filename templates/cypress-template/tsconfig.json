@@ -11,5 +11,5 @@
     "noEmit": true,
     "types": ["cypress", "node"]
   },
-  "include": ["cypress/**/*.ts", "cypress/**/*.d.ts", "config/**/*.ts", "cypress.config.ts"]
+  "include": ["cypress/**/*.ts", "cypress/**/*.d.ts", "config/**/*.ts", "cypress.config.ts", "allurerc.mjs"]
 }

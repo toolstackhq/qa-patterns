@@ -158,6 +158,11 @@ jobs:
           install: false
           command: npm test
 
+      - name: Generate generated Cypress Allure report
+        if: always()
+        working-directory: /tmp/generated-cypress-template
+        run: npm run report:allure
+
       - name: Upload generated Cypress artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -166,6 +171,7 @@ jobs:
           if-no-files-found: ignore
           path: |
             /tmp/generated-cypress-template/reports
+            /tmp/generated-cypress-template/allure-results
             /tmp/generated-cypress-template/cypress/screenshots
             /tmp/generated-cypress-template/cypress/videos
 
@@ -210,5 +216,6 @@ jobs:
           if-no-files-found: ignore
           path: |
             /tmp/generated-cypress-template-happy-path/reports
+            /tmp/generated-cypress-template-happy-path/allure-results
             /tmp/generated-cypress-template-happy-path/cypress/screenshots
             /tmp/generated-cypress-template-happy-path/cypress/videos

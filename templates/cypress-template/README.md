@@ -25,6 +25,7 @@ This is a Cypress + TypeScript automation framework template for a small determi
 - multi-environment runtime config with `dev`, `staging`, and `prod`
 - env-based secret resolution with a replaceable `SecretProvider`
 - built-in screenshots and videos on failure
+- optional single-file Allure report
 - ESLint rules that keep selectors out of spec files
 - bundled deterministic UI demo app and GitHub Actions workflow
 
@@ -78,6 +79,12 @@ If you want to run the demo app manually for debugging:
 
 ```bash
 npm run demo:ui
+```
+
+If you want an Allure report after a run:
+
+```bash
+npm run report:allure
 ```
 
 Default local values:
@@ -135,6 +142,7 @@ npm run demo:ui
 npm run lint
 npm run typecheck
 npm run cy:run
+npm run report:allure
 ```
 
 ## Reports and artifacts
@@ -143,8 +151,12 @@ Outputs:
 
 - Cypress videos: `reports/videos`
 - Cypress screenshots: `reports/screenshots`
+- Allure single file: `reports/allure/index.html`
+- raw Allure results: `allure-results`
 
 The default Cypress terminal output is kept as the main reporting path.
+
+If you only want Cypress's built-in output, remove the `allureCypress(...)` call in `cypress.config.ts`.
 
 ## Add a new test
 
