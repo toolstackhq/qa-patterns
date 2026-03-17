@@ -2,6 +2,7 @@
 
 [![Repository Validation](https://github.com/toolstackhq/qa-patterns/actions/workflows/playwright-tests.yml/badge.svg?branch=main)](https://github.com/toolstackhq/qa-patterns/actions/workflows/playwright-tests.yml)
 [![Generated Template Validation](https://github.com/toolstackhq/qa-patterns/actions/workflows/generated-template-validation.yml/badge.svg?branch=main)](https://github.com/toolstackhq/qa-patterns/actions/workflows/generated-template-validation.yml)
+[![MCP Server Validation](https://github.com/toolstackhq/qa-patterns/actions/workflows/mcp-server.yml/badge.svg?branch=main)](https://github.com/toolstackhq/qa-patterns/actions/workflows/mcp-server.yml)
 [![Dependency Watch](https://github.com/toolstackhq/qa-patterns/actions/workflows/dependency-watch.yml/badge.svg?branch=main)](https://github.com/toolstackhq/qa-patterns/actions/workflows/dependency-watch.yml)
 [![npm version](https://img.shields.io/npm/v/%40toolstackhq%2Fcreate-qa-patterns)](https://www.npmjs.com/package/@toolstackhq/create-qa-patterns)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18.18.0-339933?logo=node.js&logoColor=white)](./package.json)
