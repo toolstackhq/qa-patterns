@@ -72,6 +72,11 @@ jobs:
 
   playwright-template-docker:
     runs-on: ubuntu-latest
+    env:
+      DEV_APP_USERNAME: ci-docker-user
+      DEV_APP_PASSWORD: ci-docker-password-A1!
+      UI_DEMO_USERNAME: ci-docker-user
+      UI_DEMO_PASSWORD: ci-docker-password-A1!
 
     steps:
       - uses: actions/checkout@v4
@@ -113,6 +118,10 @@ jobs:
             -e TEST_RUN_ID=ci-docker \
             -e DEV_UI_BASE_URL=http://host.docker.internal:3000 \
             -e DEV_API_BASE_URL=http://host.docker.internal:3001 \
+            -e DEV_APP_USERNAME=${DEV_APP_USERNAME} \
+            -e DEV_APP_PASSWORD=${DEV_APP_PASSWORD} \
+            -e UI_DEMO_USERNAME=${UI_DEMO_USERNAME} \
+            -e UI_DEMO_PASSWORD=${UI_DEMO_PASSWORD} \
             -v "${GITHUB_WORKSPACE}/templates/playwright-template/reports:/workspace/reports" \
             -v "${GITHUB_WORKSPACE}/templates/playwright-template/allure-results:/workspace/allure-results" \
             -v "${GITHUB_WORKSPACE}/templates/playwright-template/test-results:/workspace/test-results" \
