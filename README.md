@@ -26,17 +26,19 @@ Supported projects today:
 
 | Feature | Playwright | Cypress |
 | --- | --- | --- |
-| TypeScript template | ✓ | ✓ |
-| Deterministic demo app | ✓ | ✓ |
-| API example | ✓ | - |
-| Data factory | ✓ | ✓ |
-| Page objects / page modules | ✓ | ✓ |
-| Linting checks | ✓ | ✓ |
-| CI workflow | ✓ | ✓ |
-| Optional Allure report | ✓ | ✓ |
-| Docker support | ✓ | - |
-| MCP scaffolding support | ✓ | ✓ |
-| Safe template upgrade checks | ✓ | ✓ |
+| TypeScript template | **YES** | **YES** |
+| Built-in sample app for local testing | **YES** | **YES** |
+| API example | **YES** | - |
+| Data factory | **YES** | **YES** |
+| Page objects / page modules | **YES** | **YES** |
+| Multi-environment support | **YES** | **YES** |
+| Secret management pattern | **YES** | **YES** |
+| Linting checks | **YES** | **YES** |
+| CI workflow | **YES** | **YES** |
+| Optional Allure report | **YES** | **YES** |
+| Docker support | **YES** | - |
+| MCP scaffolding support | **YES** | **YES** |
+| Safe template upgrade checks | **YES** | **YES** |
 
 ## Use as npm CLI
 
