@@ -7,120 +7,155 @@
 [![npm version](https://img.shields.io/npm/v/%40toolstackhq%2Fcreate-qa-patterns)](https://www.npmjs.com/package/@toolstackhq/create-qa-patterns)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18.18.0-339933?logo=node.js&logoColor=white)](./package.json)
 
-`qa-patterns` is a repository of reusable test automation patterns.
+`qa-patterns` is a project scaffolding tool for modern test automation frameworks.
 
-It gives teams a clean starting point for building automation frameworks without having to invent the structure from scratch.
+Supported projects today:
+
+- `Playwright`
+- `Cypress`
 
 ## Table of contents
 
-- [Why this repo exists](#why-this-repo-exists)
-- [Feature set](#feature-set)
-- [How it works](#how-it-works)
-- [Quick start](#quick-start)
-- [Main commands](#main-commands)
-- [Documentation](#documentation)
-- [Default local credentials](#default-local-credentials)
+- [Feature matrix](#feature-matrix)
+- [Use as npm CLI](#use-as-npm-cli)
+- [Use as MCP server](#use-as-mcp-server)
+- [Detailed documentation](#detailed-documentation)
+- [Contributing](#contributing)
 
-It currently includes:
+## Feature matrix
 
-- a `Playwright` + `TypeScript` framework template
-- a `Cypress` + `TypeScript` framework template
-- a deterministic `UI` demo app for browser testing
-- a deterministic `API` demo server for API testing
-- `CI`, linting, reporting, and extension patterns
+| Feature | Playwright | Cypress |
+| --- | --- | --- |
+| TypeScript template | ✓ | ✓ |
+| Deterministic demo app | ✓ | ✓ |
+| API example | ✓ | - |
+| Data factory | ✓ | ✓ |
+| Page objects / page modules | ✓ | ✓ |
+| Linting checks | ✓ | ✓ |
+| CI workflow | ✓ | ✓ |
+| Optional Allure report | ✓ | ✓ |
+| Docker support | ✓ | - |
+| MCP scaffolding support | ✓ | ✓ |
+| Safe template upgrade checks | ✓ | ✓ |
 
-## Why this repo exists
-
-Most automation repositories either start too bare or become too complex too quickly.
-
-This repository aims for a middle ground:
-
-- simple enough to understand quickly
-- structured enough to scale
-- realistic enough to reuse in real projects
-- deterministic enough to run repeatedly in CI
-
-## Feature set
-
-- workflow-first Playwright tests instead of selector-heavy scripts
-- Cypress-native UI tests with custom commands and page modules
-- page objects that own all locators
-- shared fixtures for runtime config, pages, logging, and test data
-- generic data factories so tests stay readable
-- multi-environment config with `dev`, `staging`, and `prod`
-- env-based secret resolution with a replaceable secret provider model
-- built-in Playwright HTML reporting
-- optional single-file Allure reporting
-- structured execution logs for CI diagnostics
-- lint rules that protect the framework shape
-- Docker and GitHub Actions support
-
-## How it works
-
-- the demo apps provide predictable UI and API targets
-- the Playwright template reads environment and secret values at runtime
-- tests run against whatever app URLs and credentials match `TEST_ENV`
-- page objects keep selector logic out of test files
-- reports, traces, screenshots, videos, and logs are saved for local debugging and CI
-
-## Quick start
-
-1. Install dependencies:
+## Use as npm CLI
 
 ```bash
-npm install
+# Run the scaffolder
+npx @toolstackhq/create-qa-patterns
 ```
 
-2. Start the demo apps in separate terminals:
-
-```bash
-npm run dev:ui
+```text
+? Select a template
+? Target directory
+? Run npm install now?
+? Run npx playwright install now?   # Playwright only
+? Run npm test now?
 ```
 
 ```bash
-npm run dev:api
+# Scaffold Playwright directly
+npx @toolstackhq/create-qa-patterns playwright-template my-project
 ```
-
-3. Run the Playwright template:
 
 ```bash
-npm test
+# Scaffold Cypress directly
+npx @toolstackhq/create-qa-patterns cypress-template my-project
 ```
-
-## Main commands
-
-From the repository root:
 
 ```bash
-npm test
-npm run test:smoke
-npm run test:regression
-npm run lint
-npm run typecheck
+# Check for safe managed-template updates later
+npx -y @toolstackhq/create-qa-patterns upgrade check .
 ```
-
-From `templates/playwright-template`:
 
 ```bash
-npm run report:playwright
-npm run report:allure
+# Apply only safe managed-template updates
+npx -y @toolstackhq/create-qa-patterns upgrade apply --safe .
 ```
 
-## Documentation
+<!-- TODO: add scaffolding GIF demo here -->
+
+## Use as MCP server
+
+Use the MCP server when you want an LLM to scaffold projects deterministically instead of generating framework boilerplate from scratch.
+
+<details>
+<summary>Codex</summary>
+
+Add this to your Codex MCP config:
+
+```json
+{
+  "mcpServers": {
+    "qa-patterns": {
+      "command": "/absolute/path/to/node",
+      "args": [
+        "/absolute/path/to/qa-patterns/packages/mcp-server/src/index.mjs"
+      ],
+      "cwd": "/absolute/path/to/qa-patterns"
+    }
+  }
+}
+```
+
+If you use `nvm`, get the Node binary path with `nvm which 24`.
+
+Prompt example:
+
+```text
+Create a Playwright framework in /tmp/pw-demo without installing dependencies.
+```
+
+</details>
+
+<details>
+<summary>Claude Code</summary>
+
+Anthropic documents Claude Code MCP servers in a project `.mcp.json` file. Reference: [Connect Claude Code to tools via MCP](https://docs.anthropic.com/en/docs/claude-code/mcp).
+
+```json
+{
+  "mcpServers": {
+    "qa-patterns": {
+      "command": "/absolute/path/to/node",
+      "args": [
+        "/absolute/path/to/qa-patterns/packages/mcp-server/src/index.mjs"
+      ],
+      "cwd": "/absolute/path/to/qa-patterns"
+    }
+  }
+}
+```
+
+If you use `nvm`, get the Node binary path with `nvm which 24`.
+
+Prompt example:
+
+```text
+Describe the playwright-template and scaffold it in ./my-framework.
+```
+
+</details>
+
+## Detailed documentation
 
 - [Docs index](./docs/README.md)
 - [MCP docs site](https://toolstackhq.github.io/qa-patterns/)
 - [Run locally](./docs/local-development.md)
-- [Write and extend tests](./docs/extending-the-repository.md)
 - [Framework architecture](./docs/architecture.md)
+- [Write and extend tests](./docs/extending-the-repository.md)
 - [Reporting](./docs/reporting.md)
 - [CI and quality checks](./docs/ci-and-quality.md)
 - [Security and secrets](./docs/security.md)
 - [MCP server package](./packages/mcp-server/README.md)
-- [Playwright template package](./templates/playwright-template/README.md)
-- [Cypress template package](./templates/cypress-template/README.md)
+- [Playwright template README](./templates/playwright-template/README.md)
+- [Cypress template README](./templates/cypress-template/README.md)
 
-## Default local credentials
+## Contributing
 
-- username: `tester`
-- password: `Password123!`
+Open an issue or PR if you want to add:
+
+- a new framework template
+- shared upgrade logic
+- new MCP tooling
+- stronger CI or reporting patterns
