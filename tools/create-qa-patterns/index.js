@@ -927,7 +927,9 @@ Generated ${template ? template.label : template.id} in ${targetDirectory}
 \n`);
 
   if (!generatedInCurrentDirectory) {
-    process.stdout.write(`${colors.cyan("Change directory first:")}\n  cd ${path.relative(process.cwd(), targetDirectory) || "."}\n\n`);
+    process.stdout.write(
+      `${colors.cyan("Your shell stays in the original directory. To work in the generated project, run:")}\n  cd ${path.relative(process.cwd(), targetDirectory) || "."}\n\n`
+    );
   }
 }
 
