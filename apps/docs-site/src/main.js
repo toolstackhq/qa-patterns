@@ -21,7 +21,7 @@ document.querySelector('#app').innerHTML = `
     <header class="hero">
       <div class="hero__copy">
         <p class="eyebrow">qa-patterns</p>
-        <h1>Scaffold modern QA frameworks without hand-building the boilerplate.</h1>
+        <h1>Scaffold QA frameworks that are ready to run.</h1>
         <p class="lede">
           <code>qa-patterns</code> is a project scaffolding tool for test automation teams. It ships ready-to-run
           <code>Playwright</code> and <code>Cypress</code> templates, local demo apps, CI wiring, reporting, and safe
@@ -125,7 +125,7 @@ document.querySelector('#app').innerHTML = `
           <h2>Use the same scaffolder through an LLM client</h2>
         </div>
         <div class="grid grid--two">
-          <article class="tool-card">
+          <article class="tool-card tool-card--code">
             <h3><code>Codex</code></h3>
             <pre><code>{
   "mcpServers": {
@@ -139,7 +139,7 @@ document.querySelector('#app').innerHTML = `
   }
 }</code></pre>
           </article>
-          <article class="tool-card">
+          <article class="tool-card tool-card--code">
             <h3><code>Claude Code</code></h3>
             <pre><code>{
   "mcpServers": {
