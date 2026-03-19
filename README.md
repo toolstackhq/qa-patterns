@@ -14,6 +14,7 @@ Supported projects today:
 
 - `Playwright`
 - `Cypress`
+- `WebdriverIO`
 
 ## Table of contents
 
@@ -25,21 +26,21 @@ Supported projects today:
 
 ## Feature matrix
 
-| Feature                               | Playwright | Cypress |
-| ------------------------------------- | ---------- | ------- |
-| TypeScript template                   | **YES**    | **YES** |
-| Built-in sample app for local testing | **YES**    | **YES** |
-| API example                           | **YES**    | -       |
-| Data factory                          | **YES**    | **YES** |
-| Page objects / page modules           | **YES**    | **YES** |
-| Multi-environment support             | **YES**    | **YES** |
-| Secret management pattern             | **YES**    | **YES** |
-| Linting checks                        | **YES**    | **YES** |
-| CI workflow                           | **YES**    | **YES** |
-| Optional Allure report                | **YES**    | **YES** |
-| Docker support                        | **YES**    | -       |
-| MCP scaffolding support               | **YES**    | **YES** |
-| Safe template upgrade checks          | **YES**    | **YES** |
+| Feature                               | Playwright | Cypress | WebdriverIO |
+| ------------------------------------- | ---------- | ------- | ----------- |
+| TypeScript template                   | **YES**    | **YES** | **YES**     |
+| Built-in sample app for local testing | **YES**    | **YES** | **YES**     |
+| API example                           | **YES**    | -       | -           |
+| Data factory                          | **YES**    | **YES** | **YES**     |
+| Page objects / page modules           | **YES**    | **YES** | **YES**     |
+| Multi-environment support             | **YES**    | **YES** | **YES**     |
+| Secret management pattern             | **YES**    | **YES** | **YES**     |
+| Linting checks                        | **YES**    | **YES** | **YES**     |
+| CI workflow                           | **YES**    | **YES** | **YES**     |
+| Optional Allure report                | **YES**    | **YES** | **YES**     |
+| Docker support                        | **YES**    | -       | -           |
+| MCP scaffolding support               | **YES**    | **YES** | **YES**     |
+| Safe template upgrade checks          | **YES**    | **YES** | **YES**     |
 
 ## Use as npm CLI
 
@@ -64,6 +65,11 @@ npx @toolstackhq/create-qa-patterns playwright-template my-project
 ```bash
 # Scaffold Cypress directly
 npx @toolstackhq/create-qa-patterns cypress-template my-project
+```
+
+```bash
+# Scaffold WebdriverIO directly
+npx @toolstackhq/create-qa-patterns wdio-template my-project
 ```
 
 ```bash
@@ -153,6 +159,7 @@ Describe the playwright-template and scaffold it in ./my-framework.
 - [MCP server package](./packages/mcp-server/README.md)
 - [Playwright template README](./templates/playwright-template/README.md)
 - [Cypress template README](./templates/cypress-template/README.md)
+- [WebdriverIO template README](./templates/wdio-template/README.md)
 
 ## Contributing
 

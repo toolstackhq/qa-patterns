@@ -58,7 +58,14 @@ const MANAGED_FILE_PATTERNS = {
     'utils/logger.ts',
     'utils/test-step.ts'
   ],
-  'cypress-template': ['cypress.config.ts']
+  'cypress-template': ['cypress.config.ts'],
+  'wdio-template': [
+    'wdio.conf.ts',
+    'lint/**',
+    'reporters/**',
+    'utils/logger.ts',
+    'utils/test-step.ts'
+  ]
 };
 
 const TEMPLATE_CATALOG = [
@@ -84,6 +91,15 @@ const TEMPLATE_CATALOG = [
     description:
       'TypeScript starter with Cypress e2e specs, custom commands, page modules, env-based config, CI, and a bundled demo app.',
     defaultPackageName: 'cypress-template',
+    demoAppsManagedByTemplate: true
+  },
+  {
+    id: 'wdio-template',
+    aliases: ['webdriverio', 'wdio'],
+    label: 'WebdriverIO Template',
+    description:
+      'TypeScript starter with WebdriverIO + Mocha, page objects, env-based config, CI, and a bundled demo app.',
+    defaultPackageName: 'wdio-template',
     demoAppsManagedByTemplate: true
   }
 ];

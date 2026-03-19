@@ -34,6 +34,10 @@ Generate the Cypress template explicitly:
 create-qa-patterns cypress-template my-project
 ```
 
+```bash
+create-qa-patterns wdio-template my-project
+```
+
 Generate without post-create prompts, which is useful for CI or scripted setup:
 
 ```bash
@@ -62,6 +66,7 @@ The upgrade flow intentionally avoids overwriting user-owned test and page code.
 
 - `playwright-template`
 - `cypress-template`
+- `wdio-template`
 
 ## Interactive flow
 

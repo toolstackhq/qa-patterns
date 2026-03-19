@@ -1,19 +1,19 @@
 import './styles.css';
 
 const featureRows = [
-  ['TypeScript template', 'YES', 'YES'],
-  ['Built-in sample app for local testing', 'YES', 'YES'],
-  ['API example', 'YES', '-'],
-  ['Data factory', 'YES', 'YES'],
-  ['Page objects / page modules', 'YES', 'YES'],
-  ['Multi-environment support', 'YES', 'YES'],
-  ['Secret management pattern', 'YES', 'YES'],
-  ['Linting checks', 'YES', 'YES'],
-  ['CI workflow', 'YES', 'YES'],
-  ['Optional Allure report', 'YES', 'YES'],
-  ['Docker support', 'YES', '-'],
-  ['MCP scaffolding support', 'YES', 'YES'],
-  ['Safe template upgrade checks', 'YES', 'YES']
+  ['TypeScript template', 'YES', 'YES', 'YES'],
+  ['Built-in sample app for local testing', 'YES', 'YES', 'YES'],
+  ['API example', 'YES', '-', '-'],
+  ['Data factory', 'YES', 'YES', 'YES'],
+  ['Page objects / page modules', 'YES', 'YES', 'YES'],
+  ['Multi-environment support', 'YES', 'YES', 'YES'],
+  ['Secret management pattern', 'YES', 'YES', 'YES'],
+  ['Linting checks', 'YES', 'YES', 'YES'],
+  ['CI workflow', 'YES', 'YES', 'YES'],
+  ['Optional Allure report', 'YES', 'YES', 'YES'],
+  ['Docker support', 'YES', '-', '-'],
+  ['MCP scaffolding support', 'YES', 'YES', 'YES'],
+  ['Safe template upgrade checks', 'YES', 'YES', 'YES']
 ];
 
 document.querySelector('#app').innerHTML = `
@@ -24,8 +24,8 @@ document.querySelector('#app').innerHTML = `
         <h1>Scaffold QA frameworks that are ready to run.</h1>
         <p class="lede">
           <code>qa-patterns</code> is a project scaffolding tool for test automation teams. It ships ready-to-run
-          <code>Playwright</code> and <code>Cypress</code> templates, local demo apps, CI wiring, reporting, and safe
-          template upgrade checks.
+          <code>Playwright</code>, <code>Cypress</code>, and <code>WebdriverIO</code> templates, local demo apps, CI
+          wiring, reporting, and safe template upgrade checks.
         </p>
         <div class="hero__actions">
           <a href="#cli" class="button button--primary">Use the CLI</a>
@@ -47,6 +47,7 @@ document.querySelector('#app').innerHTML = `
         <ul class="panel-list">
           <li><code>playwright-template</code></li>
           <li><code>cypress-template</code></li>
+          <li><code>wdio-template</code></li>
         </ul>
         <p class="panel__label">Upgrade check later</p>
         <pre><code>npx -y @toolstackhq/create-qa-patterns upgrade check .</code></pre>
@@ -81,16 +82,18 @@ document.querySelector('#app').innerHTML = `
                 <th>Feature</th>
                 <th>Playwright</th>
                 <th>Cypress</th>
+                <th>WebdriverIO</th>
               </tr>
             </thead>
             <tbody>
               ${featureRows
                 .map(
-                  ([feature, playwright, cypress]) => `
+                  ([feature, playwright, cypress, wdio]) => `
                     <tr>
                       <td>${feature}</td>
                       <td><span class="status ${playwright === 'YES' ? 'status--yes' : 'status--muted'}">${playwright}</span></td>
                       <td><span class="status ${cypress === 'YES' ? 'status--yes' : 'status--muted'}">${cypress}</span></td>
+                      <td><span class="status ${wdio === 'YES' ? 'status--yes' : 'status--muted'}">${wdio}</span></td>
                     </tr>
                   `
                 )
@@ -115,6 +118,7 @@ document.querySelector('#app').innerHTML = `
             <p class="panel__label">Direct template selection</p>
             <pre><code>npx @toolstackhq/create-qa-patterns playwright-template my-project</code></pre>
             <pre><code>npx @toolstackhq/create-qa-patterns cypress-template my-project</code></pre>
+            <pre><code>npx @toolstackhq/create-qa-patterns wdio-template my-project</code></pre>
           </article>
         </div>
       </section>

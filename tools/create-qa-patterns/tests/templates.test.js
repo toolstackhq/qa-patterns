@@ -25,6 +25,10 @@ test('createTemplateAliases resolves template ids and aliases', () => {
     {
       id: 'playwright-template',
       aliases: ['playwright', 'pw']
+    },
+    {
+      id: 'wdio-template',
+      aliases: ['webdriverio', 'wdio']
     }
   ]);
 
@@ -34,4 +38,7 @@ test('createTemplateAliases resolves template ids and aliases', () => {
   );
   assert.equal(resolveTemplate(aliases, 'playwright'), 'playwright-template');
   assert.equal(resolveTemplate(aliases, 'pw'), 'playwright-template');
+  assert.equal(resolveTemplate(aliases, 'wdio-template'), 'wdio-template');
+  assert.equal(resolveTemplate(aliases, 'webdriverio'), 'wdio-template');
+  assert.equal(resolveTemplate(aliases, 'wdio'), 'wdio-template');
 });

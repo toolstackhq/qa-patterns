@@ -44,3 +44,15 @@ test('resolveNonInteractiveArgs accepts explicit template and target directory',
   assert.equal(result.generatedInCurrentDirectory, false);
   assert.match(result.targetDirectory, /demo-project$/);
 });
+
+test('resolveNonInteractiveArgs accepts a WebdriverIO alias and target directory', () => {
+  const result = resolveNonInteractiveArgs(['wdio', 'demo-project'], {
+    defaultTemplate: DEFAULT_TEMPLATE,
+    resolveTemplate: (value) => resolveTemplate(templateAliases, value),
+    supportedTemplateIds
+  });
+
+  assert.equal(result.templateName, 'wdio-template');
+  assert.equal(result.generatedInCurrentDirectory, false);
+  assert.match(result.targetDirectory, /demo-project$/);
+});

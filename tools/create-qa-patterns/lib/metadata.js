@@ -211,6 +211,10 @@ function detectTemplateFromProject(targetDirectory, metadataFilename) {
     return 'cypress-template';
   }
 
+  if (fs.existsSync(path.join(targetDirectory, 'wdio.conf.ts'))) {
+    return 'wdio-template';
+  }
+
   throw new Error(`Could not detect the template used for ${targetDirectory}.`);
 }
 

@@ -25,11 +25,14 @@ test('renderLocalEnv includes api base url only for playwright', () => {
 
   const playwrightEnv = renderLocalEnv('playwright-template', credentials);
   const cypressEnv = renderLocalEnv('cypress-template', credentials);
+  const wdioEnv = renderLocalEnv('wdio-template', credentials);
 
   assert.match(playwrightEnv, /DEV_API_BASE_URL=http:\/\/127.0.0.1:3001/);
   assert.doesNotMatch(cypressEnv, /DEV_API_BASE_URL/);
+  assert.doesNotMatch(wdioEnv, /DEV_API_BASE_URL/);
   assert.match(playwrightEnv, /DEV_APP_USERNAME=local-user/);
   assert.match(cypressEnv, /UI_DEMO_PASSWORD=local-password/);
+  assert.match(wdioEnv, /UI_DEMO_PASSWORD=local-password/);
 });
 
 test('writeGeneratedLocalEnv creates .env only once', () => {

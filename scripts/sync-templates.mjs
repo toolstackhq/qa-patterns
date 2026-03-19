@@ -5,7 +5,8 @@
  * framework templates and the CLI tool's bundled template copies.
  *
  * Playwright receives files as-is. Cypress receives files with targeted
- * transforms (remove apiBaseUrl, adjust import paths).
+ * transforms (remove apiBaseUrl, adjust import paths). WebdriverIO uses the
+ * same shared config/data layer with a Cypress-like config transform.
  *
  * Run:  node scripts/sync-templates.mjs
  * Check: node scripts/sync-templates.mjs --check
@@ -57,14 +58,16 @@ const SYNC_MAP = [
     source: 'config/test-env.ts',
     targets: [
       { dest: 'templates/playwright-template/config/test-env.ts' },
-      { dest: 'templates/cypress-template/config/test-env.ts' }
+      { dest: 'templates/cypress-template/config/test-env.ts' },
+      { dest: 'templates/wdio-template/config/test-env.ts' }
     ]
   },
   {
     source: 'config/secret-manager.ts',
     targets: [
       { dest: 'templates/playwright-template/config/secret-manager.ts' },
-      { dest: 'templates/cypress-template/config/secret-manager.ts' }
+      { dest: 'templates/cypress-template/config/secret-manager.ts' },
+      { dest: 'templates/wdio-template/config/secret-manager.ts' }
     ]
   },
   {
@@ -73,6 +76,10 @@ const SYNC_MAP = [
       { dest: 'templates/playwright-template/config/environments.ts' },
       {
         dest: 'templates/cypress-template/config/environments.ts',
+        transforms: [removeApiBaseUrl]
+      },
+      {
+        dest: 'templates/wdio-template/config/environments.ts',
         transforms: [removeApiBaseUrl]
       }
     ]
@@ -84,6 +91,10 @@ const SYNC_MAP = [
       {
         dest: 'templates/cypress-template/config/runtime-config.ts',
         transforms: [removeApiBaseUrl]
+      },
+      {
+        dest: 'templates/wdio-template/config/runtime-config.ts',
+        transforms: [removeApiBaseUrl]
       }
     ]
   },
@@ -94,6 +105,9 @@ const SYNC_MAP = [
       { dest: 'templates/playwright-template/data/generators/id-generator.ts' },
       {
         dest: 'templates/cypress-template/cypress/support/data/id-generator.ts'
+      },
+      {
+        dest: 'templates/wdio-template/data/generators/id-generator.ts'
       }
     ]
   },
@@ -103,6 +117,9 @@ const SYNC_MAP = [
       { dest: 'templates/playwright-template/data/generators/seeded-faker.ts' },
       {
         dest: 'templates/cypress-template/cypress/support/data/seeded-faker.ts'
+      },
+      {
+        dest: 'templates/wdio-template/data/generators/seeded-faker.ts'
       }
     ]
   },
@@ -113,6 +130,9 @@ const SYNC_MAP = [
       {
         dest: 'templates/cypress-template/cypress/support/data/data-factory.ts',
         transforms: [rewriteDataImports]
+      },
+      {
+        dest: 'templates/wdio-template/data/factories/data-factory.ts'
       }
     ]
   }
@@ -173,7 +193,11 @@ function syncFile(source, target) {
 }
 
 function syncCliTemplates() {
-  const templateNames = ['playwright-template', 'cypress-template'];
+  const templateNames = [
+    'playwright-template',
+    'cypress-template',
+    'wdio-template'
+  ];
 
   for (const name of templateNames) {
     const src = path.join(ROOT, 'templates', name);

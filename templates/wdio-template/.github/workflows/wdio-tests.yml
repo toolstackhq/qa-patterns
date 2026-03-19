@@ -1,0 +1,46 @@
+name: WebdriverIO Template Validation
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'templates/wdio-template/**'
+      - 'test-apps/**'
+      - 'package.json'
+
+jobs:
+  wdio:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install template dependencies
+        working-directory: templates/wdio-template
+        run: npm ci
+
+      - name: Run WebdriverIO validation
+        working-directory: templates/wdio-template
+        env:
+          TEST_ENV: dev
+          TEST_RUN_ID: ci
+        run: bash ./scripts/run-tests.sh
+
+      - name: Generate Allure report
+        if: always()
+        working-directory: templates/wdio-template
+        run: npm run report:allure
+
+      - name: Upload WebdriverIO artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wdio-template-artifacts
+          if-no-files-found: ignore
+          path: |
+            templates/wdio-template/reports
+            templates/wdio-template/allure-results

@@ -34,6 +34,13 @@ const TEMPLATE_DEFINITIONS = {
     description:
       'TypeScript Cypress starter with custom commands, page modules, deterministic UI demo app, CI, and optional Allure reporting.',
     mainCommands: ['npm install', 'npm test', 'npm run report:allure']
+  },
+  'wdio-template': {
+    id: 'wdio-template',
+    label: 'WebdriverIO Template',
+    description:
+      'TypeScript WebdriverIO starter with Mocha, page objects, deterministic UI demo app, CI, and optional Allure reporting.',
+    mainCommands: ['npm install', 'npm test', 'npm run report:allure']
   }
 };
 
@@ -77,6 +84,10 @@ function detectTemplateFromProject(targetDirectory) {
 
   if (fs.existsSync(path.join(targetDirectory, 'cypress.config.ts'))) {
     return 'cypress-template';
+  }
+
+  if (fs.existsSync(path.join(targetDirectory, 'wdio.conf.ts'))) {
+    return 'wdio-template';
   }
 
   throw new Error(`Could not detect template type for ${targetDirectory}.`);
@@ -304,7 +315,11 @@ server.registerTool(
     description:
       'Describe one template, including its purpose and main commands.',
     inputSchema: {
-      template: z.enum(['playwright-template', 'cypress-template'])
+      template: z.enum([
+        'playwright-template',
+        'cypress-template',
+        'wdio-template'
+      ])
     },
     outputSchema: {
       template: z.string(),
@@ -330,7 +345,11 @@ server.registerTool(
     description:
       'Scaffold a qa-patterns template into a target directory using the existing CLI.',
     inputSchema: {
-      template: z.enum(['playwright-template', 'cypress-template']),
+      template: z.enum([
+        'playwright-template',
+        'cypress-template',
+        'wdio-template'
+      ]),
       target_directory: z.string(),
       install_dependencies: z.boolean().optional(),
       run_setup: z.boolean().optional(),
@@ -362,7 +381,9 @@ server.registerTool(
     description: "Run the generated project's validation commands.",
     inputSchema: {
       target_directory: z.string(),
-      template: z.enum(['playwright-template', 'cypress-template']).optional(),
+      template: z
+        .enum(['playwright-template', 'cypress-template', 'wdio-template'])
+        .optional(),
       install_dependencies: z.boolean().optional(),
       install_browsers: z.boolean().optional()
     },
@@ -389,7 +410,11 @@ server.registerTool(
   {
     description: 'Return the next shell commands for a generated template.',
     inputSchema: {
-      template: z.enum(['playwright-template', 'cypress-template']),
+      template: z.enum([
+        'playwright-template',
+        'cypress-template',
+        'wdio-template'
+      ]),
       target_directory: z.string()
     },
     outputSchema: {
