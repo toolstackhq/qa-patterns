@@ -17,7 +17,7 @@ test('createLocalCredentials generates non-empty username and password', () => {
   assert.ok(credentials.password.length > 10);
 });
 
-test('renderLocalEnv includes api base url only for playwright', () => {
+test('renderLocalEnv includes api base url when withApi is true or default', () => {
   const credentials = {
     username: 'local-user',
     password: 'local-password'
@@ -28,11 +28,22 @@ test('renderLocalEnv includes api base url only for playwright', () => {
   const wdioEnv = renderLocalEnv('wdio-template', credentials);
 
   assert.match(playwrightEnv, /DEV_API_BASE_URL=http:\/\/127.0.0.1:3001/);
-  assert.doesNotMatch(cypressEnv, /DEV_API_BASE_URL/);
-  assert.doesNotMatch(wdioEnv, /DEV_API_BASE_URL/);
+  assert.match(cypressEnv, /DEV_API_BASE_URL=http:\/\/127.0.0.1:3001/);
+  assert.match(wdioEnv, /DEV_API_BASE_URL=http:\/\/127.0.0.1:3001/);
   assert.match(playwrightEnv, /DEV_APP_USERNAME=local-user/);
   assert.match(cypressEnv, /UI_DEMO_PASSWORD=local-password/);
   assert.match(wdioEnv, /UI_DEMO_PASSWORD=local-password/);
+});
+
+test('renderLocalEnv excludes api base url when withApi is false', () => {
+  const credentials = {
+    username: 'local-user',
+    password: 'local-password'
+  };
+
+  const env = renderLocalEnv('cypress-template', credentials, { withApi: false });
+  assert.doesNotMatch(env, /DEV_API_BASE_URL/);
+  assert.match(env, /DEV_UI_BASE_URL/);
 });
 
 test('writeGeneratedLocalEnv creates .env only once', () => {
