@@ -104,7 +104,7 @@ function createSummary(template, targetDirectory, generatedInCurrentDirectory) {
   };
 }
 
-async function resolveScaffoldArgs(args) {
+async function resolveScaffoldArgs(args, options) {
   const explicitTemplate =
     args[0] && resolveTemplate(TEMPLATE_ALIASES, args[0]);
   const nonInteractiveOptions = {
@@ -122,6 +122,13 @@ async function resolveScaffoldArgs(args) {
   }
 
   const templateName = await selectTemplateInteractively(TEMPLATES);
+
+  // Ask about API testing feature if not already specified via flags
+  let withApi = options.withApi;
+  if (withApi === null) {
+    withApi = await askYesNo('Include REST API testing?', true);
+  }
+
   const defaultTarget = args[0] ? args[0] : '.';
   const targetAnswer = await askQuestion(
     `Target directory (${defaultTarget}): `
@@ -132,7 +139,8 @@ async function resolveScaffoldArgs(args) {
   return {
     templateName,
     targetDirectory,
-    generatedInCurrentDirectory: targetDirectory === process.cwd()
+    generatedInCurrentDirectory: targetDirectory === process.cwd(),
+    withApi
   };
 }
 
@@ -348,15 +356,16 @@ async function main() {
     supportedTemplateIds: SUPPORTED_TEMPLATE_IDS
   });
   const args = options.positionalArgs;
-  const { templateName, targetDirectory, generatedInCurrentDirectory } =
-    options.templateName
-      ? resolveNonInteractiveArgs(args, {
-          ...options,
-          defaultTemplate: DEFAULT_TEMPLATE,
-          resolveTemplate: (value) => resolveTemplate(TEMPLATE_ALIASES, value),
-          supportedTemplateIds: SUPPORTED_TEMPLATE_IDS
-        })
-      : await resolveScaffoldArgs(args);
+  const resolved = options.templateName
+    ? resolveNonInteractiveArgs(args, {
+        ...options,
+        defaultTemplate: DEFAULT_TEMPLATE,
+        resolveTemplate: (value) => resolveTemplate(TEMPLATE_ALIASES, value),
+        supportedTemplateIds: SUPPORTED_TEMPLATE_IDS
+      })
+    : await resolveScaffoldArgs(args, options);
+  const { templateName, targetDirectory, generatedInCurrentDirectory } = resolved;
+  const withApi = resolved.withApi ?? options.withApi ?? true;
   const template = getTemplate(TEMPLATES, templateName);
 
   if (!template) {
@@ -383,6 +392,7 @@ async function main() {
       initializeGitRepository,
       renderProgress,
       toPackageName,
+      withApi,
       writeGeneratedLocalEnv
     }
   );
