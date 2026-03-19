@@ -1,0 +1,14 @@
+{
+  "name": "@toolstackhq/rest-client",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Zero-dependency REST client with Postman-style interpolation and Zoro-inspired masking. Not published; synced as source into templates.",
+  "scripts": {
+    "test": "npx tsx --test ./tests/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}
