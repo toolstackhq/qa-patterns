@@ -74,28 +74,16 @@ const SYNC_MAP = [
     source: 'config/environments.ts',
     targets: [
       { dest: 'templates/playwright-template/config/environments.ts' },
-      {
-        dest: 'templates/cypress-template/config/environments.ts',
-        transforms: [removeApiBaseUrl]
-      },
-      {
-        dest: 'templates/wdio-template/config/environments.ts',
-        transforms: [removeApiBaseUrl]
-      }
+      { dest: 'templates/cypress-template/config/environments.ts' },
+      { dest: 'templates/wdio-template/config/environments.ts' }
     ]
   },
   {
     source: 'config/runtime-config.ts',
     targets: [
       { dest: 'templates/playwright-template/config/runtime-config.ts' },
-      {
-        dest: 'templates/cypress-template/config/runtime-config.ts',
-        transforms: [removeApiBaseUrl]
-      },
-      {
-        dest: 'templates/wdio-template/config/runtime-config.ts',
-        transforms: [removeApiBaseUrl]
-      }
+      { dest: 'templates/cypress-template/config/runtime-config.ts' },
+      { dest: 'templates/wdio-template/config/runtime-config.ts' }
     ]
   },
   // --- data files ---
@@ -135,7 +123,18 @@ const SYNC_MAP = [
         dest: 'templates/wdio-template/data/factories/data-factory.ts'
       }
     ]
-  }
+  },
+  // --- REST client files ---
+  ...['client', 'types', 'interpolate', 'mask', 'mask-rules', 'transport', 'retry', 'logger', 'response', 'index'].map(
+    (name) => ({
+      source: `api/rest-client/${name}.ts`,
+      targets: [
+        { dest: `templates/playwright-template/utils/api-client/${name}.ts` },
+        { dest: `templates/cypress-template/utils/api-client/${name}.ts` },
+        { dest: `templates/wdio-template/utils/api-client/${name}.ts` }
+      ]
+    })
+  )
 ];
 
 // Files and directories to exclude when syncing templates to the CLI tool
