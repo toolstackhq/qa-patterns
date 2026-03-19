@@ -9,12 +9,18 @@ import dotenv from 'dotenv';
 
 const args = process.argv.slice(2);
 const cwd = process.cwd();
-const healthUrl = 'http://127.0.0.1:3000/health';
+const uiHealthUrl = 'http://127.0.0.1:3000/health';
+const apiHealthUrl = 'http://127.0.0.1:3001/health';
 const environment = process.env.TEST_ENV ?? 'dev';
 const environmentDefaults = {
   dev: 'http://127.0.0.1:3000',
   staging: 'https://staging-ui.example.internal',
   prod: 'https://ui.example.internal'
+};
+const apiDefaults = {
+  dev: 'http://127.0.0.1:3001',
+  staging: 'https://staging-api.example.internal',
+  prod: 'https://api.example.internal'
 };
 
 dotenv.config({ path: path.resolve(cwd, '.env') });
@@ -29,9 +35,20 @@ const uiBaseUrl =
   environmentDefaults[environment] ??
   environmentDefaults.dev;
 
+const apiBaseUrl =
+  process.env[`${environment.toUpperCase()}_API_BASE_URL`] ??
+  process.env.API_BASE_URL ??
+  apiDefaults[environment] ??
+  apiDefaults.dev;
+
 const shouldAutoStartDemoApp =
   environment === 'dev' &&
   uiBaseUrl === environmentDefaults.dev &&
+  process.env.WDIO_DISABLE_LOCAL_DEMO_APP !== 'true';
+
+const shouldAutoStartApiServer =
+  environment === 'dev' &&
+  apiBaseUrl === apiDefaults.dev &&
   process.env.WDIO_DISABLE_LOCAL_DEMO_APP !== 'true';
 
 function getCommandName(command) {
@@ -75,11 +92,17 @@ function killChild(child) {
 
 async function run() {
   let demoAppProcess;
+  let apiServerProcess;
 
   try {
     if (shouldAutoStartDemoApp) {
       demoAppProcess = spawnCommand('npm', ['run', 'demo:ui']);
-      await waitForHealthcheck(healthUrl);
+      await waitForHealthcheck(uiHealthUrl);
+    }
+
+    if (shouldAutoStartApiServer) {
+      apiServerProcess = spawnCommand('npm', ['run', 'demo:api']);
+      await waitForHealthcheck(apiHealthUrl);
     }
 
     const wdioProcess = spawnCommand('npx', [
@@ -98,6 +121,7 @@ async function run() {
       process.exit(Number(exitCode) || 1);
     }
   } finally {
+    killChild(apiServerProcess);
     killChild(demoAppProcess);
   }
 }
