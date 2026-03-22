@@ -164,6 +164,7 @@ Describe the playwright-template and scaffold it in ./my-framework.
 - [MCP docs site](https://toolstackhq.github.io/qa-patterns/)
 - [Run locally](./docs/local-development.md)
 - [Framework architecture](./docs/architecture.md)
+- [Agent layer](./docs/agent-layer.md)
 - [Write and extend tests](./docs/extending-the-repository.md)
 - [Reporting](./docs/reporting.md)
 - [CI and quality checks](./docs/ci-and-quality.md)
