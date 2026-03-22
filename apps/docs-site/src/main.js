@@ -14,6 +14,7 @@ const featureRows = [
   ['Optional Allure report', 'YES', 'YES', 'YES'],
   ['Docker support', 'YES', '-', '-'],
   ['MCP scaffolding support', 'YES', 'YES', 'YES'],
+  ['AI-ready template guidance', 'YES', 'YES', 'YES'],
   ['Safe template upgrade checks', 'YES', 'YES', 'YES']
 ];
 
@@ -64,6 +65,10 @@ document.querySelector('#app').innerHTML = `
         <article class="card">
           <h2>LLM-friendly</h2>
           <p>Use the CLI directly or expose the MCP server so an agent can scaffold projects with minimal token waste.</p>
+        </article>
+        <article class="card">
+          <h2>Agent-ready</h2>
+          <p>Generated templates ship with <code>AI_CONTEXT.md</code> and <code>AGENTS.md</code> so an LLM can follow the framework boundaries instead of inventing them.</p>
         </article>
         <article class="card">
           <h2>Upgradeable</h2>
@@ -199,6 +204,9 @@ document.querySelector('#app').innerHTML = `
           <p class="panel__label">Prompt example</p>
           <pre><code>Create a Playwright framework in ./my-framework without installing dependencies.</code></pre>
         </div>
+        <p class="note">
+          Generated projects also include <code>AI_CONTEXT.md</code> and <code>AGENTS.md</code> so teams can hand the framework rules to any LLM after scaffolding.
+        </p>
       </section>
 
       <section class="section">

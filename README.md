@@ -40,6 +40,7 @@ Supported projects today:
 | Optional Allure report                | **YES**    | **YES** | **YES**     |
 | Docker support                        | **YES**    | -       | -           |
 | MCP scaffolding support               | **YES**    | **YES** | **YES**     |
+| AI-ready template guidance            | **YES**    | **YES** | **YES**     |
 | Safe template upgrade checks          | **YES**    | **YES** | **YES**     |
 
 ## Use as npm CLI
@@ -91,6 +92,13 @@ npx -y @toolstackhq/create-qa-patterns upgrade apply --safe .
 ## Use as MCP server
 
 Use the MCP server when you want an LLM to scaffold projects deterministically instead of generating framework boilerplate from scratch.
+
+Generated templates also include:
+
+- `AI_CONTEXT.md` for any LLM
+- `AGENTS.md` as a thin pointer for tools that look for agent instructions
+
+That means the generated project already carries framework-specific guidance for adding tests, updating page objects, and maintaining CI without the model inventing its own structure.
 
 <details>
 <summary>Codex</summary>
