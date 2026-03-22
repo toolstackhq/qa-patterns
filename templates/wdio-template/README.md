@@ -11,6 +11,7 @@ This is a WebdriverIO + TypeScript automation framework template for UI tests.
 - [Environment and secrets](#environment-and-secrets)
 - [Main commands](#main-commands)
 - [Reports and artifacts](#reports-and-artifacts)
+- [AI assistance](#ai-assistance)
 - [Add a new test](#add-a-new-test)
 - [Extend the framework](#extend-the-framework)
 - [Template upgrades](#template-upgrades)
@@ -169,6 +170,15 @@ Outputs:
 - failure screenshots: `test-results`
 
 If you only want WebdriverIO's built-in terminal reporting, remove the `allure` reporter entry in `wdio.conf.ts`.
+
+## AI assistance
+
+Generated projects include:
+
+- `AI_CONTEXT.md` for any LLM
+- `AGENTS.md` as a thin tool-facing pointer to that context
+
+If a team uses AI to add or maintain specs, load `AI_CONTEXT.md` first so the model keeps selectors, assertions, and page-object boundaries consistent.
 
 ## Add a new test
 

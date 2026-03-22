@@ -11,6 +11,7 @@ This is a Cypress + TypeScript automation framework template for a small determi
 - [Environment and secrets](#environment-and-secrets)
 - [Main commands](#main-commands)
 - [Reports and artifacts](#reports-and-artifacts)
+- [AI assistance](#ai-assistance)
 - [Add a new test](#add-a-new-test)
 - [Extend the framework](#extend-the-framework)
 - [Template upgrades](#template-upgrades)
@@ -159,6 +160,15 @@ Outputs:
 The default Cypress terminal output is kept as the main reporting path.
 
 If you only want Cypress's built-in output, remove the `allureCypress(...)` call in `cypress.config.ts`.
+
+## AI assistance
+
+Generated projects include:
+
+- `AI_CONTEXT.md` for any LLM
+- `AGENTS.md` as a thin tool-facing pointer to that context
+
+If a team uses AI to extend the framework or add specs, load `AI_CONTEXT.md` first so the model keeps selectors, commands, and assertions in the right places.
 
 ## Add a new test
 
