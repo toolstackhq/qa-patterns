@@ -11,6 +11,7 @@ This is a Playwright + TypeScript automation framework template for UI and API t
 - [Environment and secrets](#environment-and-secrets)
 - [Main commands](#main-commands)
 - [Reports and artifacts](#reports-and-artifacts)
+- [AI assistance](#ai-assistance)
 - [Add a new test](#add-a-new-test)
 - [Extend the framework](#extend-the-framework)
 - [Template upgrades](#template-upgrades)
@@ -187,6 +188,15 @@ Outputs:
 - traces, screenshots, videos: `test-results`
 
 If you only want Playwright reporting, remove the `allure-playwright` reporter entry in `playwright.config.ts`.
+
+## AI assistance
+
+Generated projects include:
+
+- `AI_CONTEXT.md` for any LLM
+- `AGENTS.md` as a thin tool-facing pointer to that context
+
+If a team uses AI to add or maintain tests, load `AI_CONTEXT.md` first so the model follows the framework boundaries instead of inventing its own structure.
 
 ## Add a new test
 

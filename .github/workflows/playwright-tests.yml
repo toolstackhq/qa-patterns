@@ -167,9 +167,7 @@ jobs:
         with:
           working-directory: templates/cypress-template
           install: false
-          start: npm run demo:ui
-          wait-on: 'http://127.0.0.1:3000/health'
-          command: npm run cy:run
+          command: npm test
 
       - name: Generate Cypress Allure report
         if: always()
