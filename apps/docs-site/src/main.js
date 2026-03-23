@@ -68,13 +68,15 @@ const quickStartPanes = {
   cli: {
     title: 'Use the npm CLI',
     lead: 'Generate a project, install dependencies, run tests, then start customizing.',
-    commands: [
-      'npm install -g @toolstackhq/create-qa-patterns@latest',
-      'npx @toolstackhq/create-qa-patterns',
-      'npx @toolstackhq/create-qa-patterns playwright-template my-project',
-      'npx @toolstackhq/create-qa-patterns cypress-template my-project',
-      'npx @toolstackhq/create-qa-patterns wdio-template my-project'
-    ]
+    install: 'npm install -g @toolstackhq/create-qa-patterns@latest',
+    interactive: 'npx @toolstackhq/create-qa-patterns',
+    templates: {
+      playwright:
+        'npx @toolstackhq/create-qa-patterns playwright-template my-project',
+      cypress:
+        'npx @toolstackhq/create-qa-patterns cypress-template my-project',
+      wdio: 'npx @toolstackhq/create-qa-patterns wdio-template my-project'
+    }
   },
   mcp: {
     title: 'Use the MCP server',
@@ -186,15 +188,25 @@ document.querySelector('#app').innerHTML = `
               <p class="panel__label">${quickStartPanes.cli.title}</p>
               <p class="note">${quickStartPanes.cli.lead}</p>
               <p class="quickstart__subheading">Install</p>
-              <pre class="code-pill"><code>${quickStartPanes.cli.commands[0]}</code></pre>
+              <pre class="code-pill"><code>${quickStartPanes.cli.install}</code></pre>
               <p class="quickstart__subheading">Run</p>
-              ${quickStartPanes.cli.commands
-                .slice(1)
-                .map(
-                  (command) =>
-                    `<pre class="code-pill"><code>${command}</code></pre>`
-                )
-                .join('')}
+              <pre class="code-pill"><code>${quickStartPanes.cli.interactive}</code></pre>
+              <div class="command-tabs" role="tablist" aria-label="Template commands">
+                <button class="command-tab is-active" data-command-tab="playwright" role="tab" aria-selected="true">Playwright</button>
+                <button class="command-tab" data-command-tab="cypress" role="tab" aria-selected="false">Cypress</button>
+                <button class="command-tab" data-command-tab="wdio" role="tab" aria-selected="false">WebdriverIO</button>
+              </div>
+              <div class="command-panels">
+                <div class="command-pane is-active" data-command-pane="playwright">
+                  <pre class="code-pill"><code>${quickStartPanes.cli.templates.playwright}</code></pre>
+                </div>
+                <div class="command-pane" data-command-pane="cypress" hidden>
+                  <pre class="code-pill"><code>${quickStartPanes.cli.templates.cypress}</code></pre>
+                </div>
+                <div class="command-pane" data-command-pane="wdio" hidden>
+                  <pre class="code-pill"><code>${quickStartPanes.cli.templates.wdio}</code></pre>
+                </div>
+              </div>
             </div>
             <div class="quickstart__pane" data-pane="mcp" hidden>
               <p class="panel__label">${quickStartPanes.mcp.title}</p>
@@ -325,13 +337,48 @@ Run lint, typecheck, and tests after the change.</code></pre>
 `;
 
 const terminalElement = document.querySelector('[data-termynal]');
-if (terminalElement) {
-  const terminal = new Termynal(terminalElement);
-  terminal.start();
+const terminalSection = document.querySelector('.terminal-section');
+
+if (terminalElement && terminalSection) {
+  const terminal = new Termynal(terminalElement, {
+    startDelay: 850,
+    typeDelay: 34,
+    lineDelay: 760,
+    progressDuration: 1800
+  });
+
+  let hasStartedTerminal = false;
+
+  const startTerminal = () => {
+    if (hasStartedTerminal) {
+      return;
+    }
+    hasStartedTerminal = true;
+    terminal.start();
+  };
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          startTerminal();
+          observer.disconnect();
+          break;
+        }
+      }
+    },
+    {
+      threshold: 0.55
+    }
+  );
+
+  observer.observe(terminalSection);
 }
 
 const tabs = document.querySelectorAll('[data-tab]');
 const panes = document.querySelectorAll('[data-pane]');
+const commandTabs = document.querySelectorAll('[data-command-tab]');
+const commandPanes = document.querySelectorAll('[data-command-pane]');
 
 for (const tab of tabs) {
   tab.addEventListener('click', () => {
@@ -345,6 +392,24 @@ for (const tab of tabs) {
 
     for (const pane of panes) {
       const active = pane.getAttribute('data-pane') === target;
+      pane.classList.toggle('is-active', active);
+      pane.hidden = !active;
+    }
+  });
+}
+
+for (const tab of commandTabs) {
+  tab.addEventListener('click', () => {
+    const target = tab.getAttribute('data-command-tab');
+
+    for (const item of commandTabs) {
+      const active = item === tab;
+      item.classList.toggle('is-active', active);
+      item.setAttribute('aria-selected', String(active));
+    }
+
+    for (const pane of commandPanes) {
+      const active = pane.getAttribute('data-command-pane') === target;
       pane.classList.toggle('is-active', active);
       pane.hidden = !active;
     }
