@@ -1,0 +1,13 @@
+{
+  "name": "@toolstackhq/api-demo-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Express API demo server with a minimal people resource for deterministic tests.",
+  "scripts": {
+    "dev": "node ./src/server.js",
+    "start": "node ./src/server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0"
+  }
+}

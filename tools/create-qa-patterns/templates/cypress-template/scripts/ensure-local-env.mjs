@@ -32,5 +32,6 @@ const envContents = [
 
 fs.writeFileSync(envPath, `${envContents}\n`, 'utf8');
 currentProcess.stdout.write(
-  `Generated local .env with demo credentials for ${username}\n`
+  `Generated local .env with demo credentials for ${username}\n` +
+    `Credentials were written to ${envPath}\n`
 );
