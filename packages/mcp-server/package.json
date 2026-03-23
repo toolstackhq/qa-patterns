@@ -1,6 +1,6 @@
 {
   "name": "@toolstackhq/qa-patterns-mcp",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "type": "module",
   "description": "MCP server for scaffolding and validating qa-patterns templates.",
   "license": "MIT",
@@ -29,7 +29,7 @@
     "validate": "node ./scripts/validate-mcp-server.mjs"
   },
   "dependencies": {
-    "@toolstackhq/create-qa-patterns": "1.0.17",
+    "@toolstackhq/create-qa-patterns": "1.0.18",
     "@modelcontextprotocol/sdk": "^1.27.1",
     "zod": "^3.25.76"
   }
