@@ -69,6 +69,7 @@ const quickStartPanes = {
     title: 'Use the npm CLI',
     lead: 'Generate a project, install dependencies, run tests, then start customizing.',
     commands: [
+      'npm install -g @toolstackhq/create-qa-patterns@latest',
       'npx @toolstackhq/create-qa-patterns',
       'npx @toolstackhq/create-qa-patterns playwright-template my-project',
       'npx @toolstackhq/create-qa-patterns cypress-template my-project',
@@ -181,7 +182,11 @@ document.querySelector('#app').innerHTML = `
             <div class="quickstart__pane is-active" data-pane="cli">
               <p class="panel__label">${quickStartPanes.cli.title}</p>
               <p class="note">${quickStartPanes.cli.lead}</p>
+              <p class="quickstart__subheading">Install</p>
+              <pre><code>${quickStartPanes.cli.commands[0]}</code></pre>
+              <p class="quickstart__subheading">Run</p>
               ${quickStartPanes.cli.commands
+                .slice(1)
                 .map((command) => `<pre><code>${command}</code></pre>`)
                 .join('')}
             </div>
