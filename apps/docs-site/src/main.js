@@ -209,7 +209,10 @@ document.querySelector('#app').innerHTML = `
               <p class="panel__label">${quickStartPanes.mcp.title}</p>
               <p class="note">${quickStartPanes.mcp.lead}</p>
               <pre class="code-block--full"><code>${quickStartPanes.mcp.commands.join('\n')}</code></pre>
-              <p class="note">Prompt example: <code>Create a Playwright framework in ./my-framework without installing dependencies.</code></p>
+              <div class="prompt-callout">
+                <p class="panel__label">Prompt example</p>
+                <pre class="code-pill"><code>Create a Playwright framework in ./my-framework without installing dependencies.</code></pre>
+              </div>
             </div>
           </div>
         </div>

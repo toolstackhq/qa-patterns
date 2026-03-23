@@ -357,6 +357,16 @@ a {
   justify-items: start;
 }
 
+.prompt-callout {
+  display: grid;
+  gap: 10px;
+  margin-top: 4px;
+  padding: 16px;
+  background: var(--accent-soft);
+  border: 1px solid rgba(45, 108, 223, 0.14);
+  border-radius: 18px;
+}
+
 .quickstart__subheading {
   margin: 12px 0 2px;
   color: var(--ink);
