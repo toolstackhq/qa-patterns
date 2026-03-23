@@ -126,9 +126,9 @@ document.querySelector('#app').innerHTML = `
         <aside class="hero__panel">
           <p class="panel__label">Quick start</p>
           <p class="hero__subheading">Install</p>
-          <pre><code>npm install -g @toolstackhq/create-qa-patterns@latest</code></pre>
+          <pre class="code-pill"><code>npm install -g @toolstackhq/create-qa-patterns@latest</code></pre>
           <p class="hero__subheading">Run</p>
-          <pre><code>npx @toolstackhq/create-qa-patterns</code></pre>
+          <pre class="code-pill"><code>npx @toolstackhq/create-qa-patterns</code></pre>
           <ul class="hero__meta">
             <li>3 tested templates</li>
             <li>Bundled local demo apps</li>
@@ -186,17 +186,20 @@ document.querySelector('#app').innerHTML = `
               <p class="panel__label">${quickStartPanes.cli.title}</p>
               <p class="note">${quickStartPanes.cli.lead}</p>
               <p class="quickstart__subheading">Install</p>
-              <pre><code>${quickStartPanes.cli.commands[0]}</code></pre>
+              <pre class="code-pill"><code>${quickStartPanes.cli.commands[0]}</code></pre>
               <p class="quickstart__subheading">Run</p>
               ${quickStartPanes.cli.commands
                 .slice(1)
-                .map((command) => `<pre><code>${command}</code></pre>`)
+                .map(
+                  (command) =>
+                    `<pre class="code-pill"><code>${command}</code></pre>`
+                )
                 .join('')}
             </div>
             <div class="quickstart__pane" data-pane="mcp" hidden>
               <p class="panel__label">${quickStartPanes.mcp.title}</p>
               <p class="note">${quickStartPanes.mcp.lead}</p>
-              <pre><code>${quickStartPanes.mcp.commands.join('\n')}</code></pre>
+              <pre class="code-block--full"><code>${quickStartPanes.mcp.commands.join('\n')}</code></pre>
               <p class="note">Prompt example: <code>Create a Playwright framework in ./my-framework without installing dependencies.</code></p>
             </div>
           </div>
