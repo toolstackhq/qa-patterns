@@ -123,12 +123,6 @@ async function resolveScaffoldArgs(args, options) {
 
   const templateName = await selectTemplateInteractively(TEMPLATES);
 
-  // Ask about API testing feature if not already specified via flags
-  let withApi = options.withApi;
-  if (withApi === null) {
-    withApi = await askYesNo('Include REST API testing?', true);
-  }
-
   const defaultTarget = args[0] ? args[0] : '.';
   const targetAnswer = await askQuestion(
     `Target directory (${defaultTarget}): `
@@ -139,9 +133,20 @@ async function resolveScaffoldArgs(args, options) {
   return {
     templateName,
     targetDirectory,
-    generatedInCurrentDirectory: targetDirectory === process.cwd(),
-    withApi
+    generatedInCurrentDirectory: targetDirectory === process.cwd()
   };
+}
+
+async function resolveApiPreference(currentValue) {
+  if (currentValue !== null && currentValue !== undefined) {
+    return currentValue;
+  }
+
+  if (!process.stdin.isTTY || !process.stdout.isTTY) {
+    return true;
+  }
+
+  return askYesNo('Include API tests too?', true);
 }
 
 let lastProgressLineLength = 0;
@@ -366,12 +371,15 @@ async function main() {
     : await resolveScaffoldArgs(args, options);
   const { templateName, targetDirectory, generatedInCurrentDirectory } =
     resolved;
-  const withApi = resolved.withApi ?? options.withApi ?? true;
   const template = getTemplate(TEMPLATES, templateName);
 
   if (!template) {
     throw new Error(`Unsupported template "${templateName}".`);
   }
+
+  const withApi = await resolveApiPreference(
+    resolved.withApi ?? options.withApi ?? null
+  );
 
   const prerequisites = collectPrerequisites();
   const summary = createSummary(

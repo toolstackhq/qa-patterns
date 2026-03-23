@@ -91,8 +91,8 @@ Options:
   --no-setup     Skip template-specific setup such as Playwright browser install
   --no-test      Skip npm test
   --template     Explicitly choose a template without using positional arguments
-  --with-api     Include REST API testing (default)
-  --no-api       Skip REST API testing feature
+  --with-api     Include API tests (default)
+  --no-api       Skip API tests feature
   --safe         Required with upgrade apply; only updates unchanged managed files
 
 Interactive mode:
