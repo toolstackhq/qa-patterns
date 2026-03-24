@@ -11,6 +11,7 @@ This is a Cypress + TypeScript automation framework template for a small determi
 - [Environment and secrets](#environment-and-secrets)
 - [Main commands](#main-commands)
 - [Reports and artifacts](#reports-and-artifacts)
+- [Docker](#docker)
 - [AI assistance](#ai-assistance)
 - [Add a new test](#add-a-new-test)
 - [Extend the framework](#extend-the-framework)
@@ -29,7 +30,9 @@ This is a Cypress + TypeScript automation framework template for a small determi
 - built-in screenshots and videos on failure
 - optional single-file Allure report
 - ESLint rules that keep selectors out of spec files
-- bundled deterministic UI demo app and GitHub Actions workflow
+- bundled deterministic UI and API demo apps
+- Dockerfile for containerized CI validation
+- GitHub Actions workflow
 
 ## How it works
 
@@ -49,6 +52,7 @@ cypress-template
 │   └── support
 ├── config
 ├── demo-apps
+├── docker
 ├── scripts
 ├── .github
 ├── cypress.config.ts
@@ -81,6 +85,7 @@ If you want to run the demo app manually for debugging:
 
 ```bash
 npm run demo:ui
+npm run demo:api
 ```
 
 If you want an Allure report after a run:
@@ -142,6 +147,7 @@ If your team later uses a real secret system, replace the implementation behind 
 npm test
 npm run open
 npm run demo:ui
+npm run demo:api
 npm run lint
 npm run typecheck
 npm run cy:run
@@ -160,6 +166,21 @@ Outputs:
 The default Cypress terminal output is kept as the main reporting path.
 
 If you only want Cypress's built-in output, remove the `allureCypress(...)` call in `cypress.config.ts`.
+
+## Docker
+
+The template includes:
+
+```bash
+docker/Dockerfile
+```
+
+That image runs the same `scripts/run-tests.sh` entrypoint inside a Linux container. In CI, it is intended to connect to the bundled demo services over explicit URLs such as:
+
+```bash
+DEV_UI_BASE_URL=http://host.docker.internal:3000
+DEV_API_BASE_URL=http://host.docker.internal:3001
+```
 
 ## AI assistance
 

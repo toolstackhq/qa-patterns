@@ -1,4 +1,6 @@
 // Central WebdriverIO configuration for specs, retries, reporters, and runtime env values.
+import process from 'node:process';
+
 import type { Capabilities, Options, Reporters } from '@wdio/types';
 
 import { loadRuntimeConfig } from './config/runtime-config';
@@ -7,6 +9,7 @@ import structuredReporterImport from './reporters/structured-reporter';
 const runtimeConfig = loadRuntimeConfig();
 const structuredReporter =
   structuredReporterImport as unknown as Reporters.ReporterClass;
+const chromeBinary = process.env.CHROME_BIN;
 
 export const config: Options.Testrunner &
   Capabilities.WithRequestedTestrunnerCapabilities = {
@@ -40,7 +43,8 @@ export const config: Options.Testrunner &
     {
       browserName: 'chrome',
       'goog:chromeOptions': {
-        args: ['--headless=new', '--disable-dev-shm-usage', '--no-sandbox']
+        args: ['--headless=new', '--disable-dev-shm-usage', '--no-sandbox'],
+        ...(chromeBinary ? { binary: chromeBinary } : {})
       }
     }
   ],

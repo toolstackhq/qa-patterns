@@ -43,3 +43,74 @@ jobs:
           name: cypress-template-artifacts
           path: |
             templates/cypress-template/reports
+
+  cypress-template-docker:
+    runs-on: ubuntu-latest
+    env:
+      DEV_APP_USERNAME: ci-docker-user
+      DEV_APP_PASSWORD: ci-docker-password-A1!
+      UI_DEMO_USERNAME: ci-docker-user
+      UI_DEMO_PASSWORD: ci-docker-password-A1!
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install workspace dependencies
+        run: npm ci
+
+      - name: Start API demo server
+        run: npm run dev --workspace @toolstackhq/api-demo-server &
+
+      - name: Start UI demo app
+        run: npm run dev --workspace @toolstackhq/ui-demo-app &
+
+      - name: Wait for demo services
+        run: |
+          for target in http://127.0.0.1:3000/health http://127.0.0.1:3001/health; do
+            until curl --silent --fail "$target" >/dev/null; do
+              sleep 1
+            done
+          done
+
+      - name: Prepare Docker artifacts directories
+        run: |
+          rm -rf templates/cypress-template/reports templates/cypress-template/allure-results
+          mkdir -p templates/cypress-template/reports templates/cypress-template/allure-results
+
+      - name: Build Cypress template Docker image
+        run: docker build -t testkit-cypress-template:ci -f templates/cypress-template/docker/Dockerfile templates/cypress-template
+
+      - name: Run Cypress template inside Docker
+        run: |
+          docker run --rm \
+            --add-host=host.docker.internal:host-gateway \
+            -e TEST_ENV=dev \
+            -e TEST_RUN_ID=ci-docker \
+            -e DEV_UI_BASE_URL=http://host.docker.internal:3000 \
+            -e DEV_API_BASE_URL=http://host.docker.internal:3001 \
+            -e DEV_APP_USERNAME=${DEV_APP_USERNAME} \
+            -e DEV_APP_PASSWORD=${DEV_APP_PASSWORD} \
+            -e UI_DEMO_USERNAME=${UI_DEMO_USERNAME} \
+            -e UI_DEMO_PASSWORD=${UI_DEMO_PASSWORD} \
+            -e CY_DISABLE_LOCAL_DEMO_APP=true \
+            -v "${GITHUB_WORKSPACE}/templates/cypress-template/reports:/workspace/reports" \
+            -v "${GITHUB_WORKSPACE}/templates/cypress-template/allure-results:/workspace/allure-results" \
+            testkit-cypress-template:ci
+
+      - name: Generate Cypress Allure report
+        if: always()
+        working-directory: templates/cypress-template
+        run: npm run report:allure
+
+      - name: Upload Docker Cypress artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-template-docker-artifacts
+          path: |
+            templates/cypress-template/reports
+            templates/cypress-template/allure-results

@@ -10,13 +10,14 @@ const templates = [
   {
     name: 'Cypress',
     id: 'cypress-template',
-    summary: 'Browser-focused starter with support modules and optional Allure.'
+    summary:
+      'Browser-focused starter with API checks, Docker support, and optional Allure.'
   },
   {
     name: 'WebdriverIO',
     id: 'wdio-template',
     summary:
-      'Mocha-based starter with page objects, data factories, and reports.'
+      'Mocha-based starter with API checks, Docker support, and optional Allure.'
   }
 ];
 

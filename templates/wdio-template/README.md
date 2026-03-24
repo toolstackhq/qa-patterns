@@ -11,6 +11,7 @@ This is a WebdriverIO + TypeScript automation framework template for UI tests.
 - [Environment and secrets](#environment-and-secrets)
 - [Main commands](#main-commands)
 - [Reports and artifacts](#reports-and-artifacts)
+- [Docker](#docker)
 - [AI assistance](#ai-assistance)
 - [Add a new test](#add-a-new-test)
 - [Extend the framework](#extend-the-framework)
@@ -29,6 +30,7 @@ This is a WebdriverIO + TypeScript automation framework template for UI tests.
 - optional Allure single-file report
 - screenshots and structured logs for debugging
 - ESLint rules that protect framework conventions
+- Dockerfile for containerized CI validation
 - GitHub Actions workflow for the template
 
 ## How it works
@@ -49,6 +51,8 @@ wdio-template
 ├── components
 ├── data
 ├── config
+├── demo-apps
+├── docker
 ├── reporters
 ├── utils
 ├── lint
@@ -77,6 +81,7 @@ If you want to run the demo app manually for debugging:
 
 ```bash
 npm run demo:ui
+npm run demo:api
 ```
 
 Default local values:
@@ -149,6 +154,7 @@ npm run test:smoke
 npm run test:regression
 npm run test:critical
 npm run demo:ui
+npm run demo:api
 npm run lint
 npm run typecheck
 npm run report:allure
@@ -170,6 +176,21 @@ Outputs:
 - failure screenshots: `test-results`
 
 If you only want WebdriverIO's built-in terminal reporting, remove the `allure` reporter entry in `wdio.conf.ts`.
+
+## Docker
+
+The template includes:
+
+```bash
+docker/Dockerfile
+```
+
+That image runs the same `scripts/run-tests.sh` entrypoint inside a Linux container. In CI, it is intended to connect to the bundled demo services over explicit URLs such as:
+
+```bash
+DEV_UI_BASE_URL=http://host.docker.internal:3000
+DEV_API_BASE_URL=http://host.docker.internal:3001
+```
 
 ## AI assistance
 

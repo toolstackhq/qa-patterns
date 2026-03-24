@@ -38,7 +38,7 @@ Supported projects today:
 | Linting checks                        | **✓**      | **✓**   | **✓**       |
 | CI workflow                           | **✓**      | **✓**   | **✓**       |
 | Optional Allure report                | **✓**      | **✓**   | **✓**       |
-| Docker support                        | **✓**      | -       | -           |
+| Docker support                        | **✓**      | **✓**   | **✓**       |
 | MCP scaffolding support               | **✓**      | **✓**   | **✓**       |
 | AI-ready template guidance            | **✓**      | **✓**   | **✓**       |
 | Safe template upgrade checks          | **✓**      | **✓**   | **✓**       |
