@@ -28,20 +28,20 @@ Supported projects today:
 
 | Feature                               | Playwright | Cypress | WebdriverIO |
 | ------------------------------------- | ---------- | ------- | ----------- |
-| TypeScript template                   | **YES**    | **YES** | **YES**     |
-| Built-in sample app for local testing | **YES**    | **YES** | **YES**     |
-| API example                           | **YES**    | -       | -           |
-| Data factory                          | **YES**    | **YES** | **YES**     |
-| Page objects / page modules           | **YES**    | **YES** | **YES**     |
-| Multi-environment support             | **YES**    | **YES** | **YES**     |
-| Secret management pattern             | **YES**    | **YES** | **YES**     |
-| Linting checks                        | **YES**    | **YES** | **YES**     |
-| CI workflow                           | **YES**    | **YES** | **YES**     |
-| Optional Allure report                | **YES**    | **YES** | **YES**     |
-| Docker support                        | **YES**    | -       | -           |
-| MCP scaffolding support               | **YES**    | **YES** | **YES**     |
-| AI-ready template guidance            | **YES**    | **YES** | **YES**     |
-| Safe template upgrade checks          | **YES**    | **YES** | **YES**     |
+| TypeScript template                   | **✓**      | **✓**   | **✓**       |
+| Built-in sample app for local testing | **✓**      | **✓**   | **✓**       |
+| API example                           | **✓**      | **✓**   | **✓**       |
+| Data factory                          | **✓**      | **✓**   | **✓**       |
+| Page objects / page modules           | **✓**      | **✓**   | **✓**       |
+| Multi-environment support             | **✓**      | **✓**   | **✓**       |
+| Secret management pattern             | **✓**      | **✓**   | **✓**       |
+| Linting checks                        | **✓**      | **✓**   | **✓**       |
+| CI workflow                           | **✓**      | **✓**   | **✓**       |
+| Optional Allure report                | **✓**      | **✓**   | **✓**       |
+| Docker support                        | **✓**      | -       | -           |
+| MCP scaffolding support               | **✓**      | **✓**   | **✓**       |
+| AI-ready template guidance            | **✓**      | **✓**   | **✓**       |
+| Safe template upgrade checks          | **✓**      | **✓**   | **✓**       |
 
 ## Use as npm CLI
 
