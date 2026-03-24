@@ -368,7 +368,7 @@ function createHtml({ packageName, templates, defaultTemplateId }) {
         <h1>testkit setup</h1>
         <p class="subtle">Answer the questions below, start the scaffold, then go back to the terminal.</p>
 
-        <form id="scaffold-form" class="form-stack">
+        <form id="scaffold-form" class="form-stack" action="/" method="get">
           <div class="field">
             <label for="templateSelect">Framework</label>
             <select id="templateSelect" class="select-input" name="templateSelect">${optionsHtml}</select>
@@ -432,7 +432,7 @@ function createHtml({ packageName, templates, defaultTemplateId }) {
           </div>
 
           <div class="button-row">
-            <button id="startButton" class="button button-primary" type="submit">
+            <button id="startButton" class="button button-primary" type="button">
               Generate template
             </button>
             <button id="resetButton" class="button button-secondary" type="button">
@@ -664,7 +664,7 @@ function createHtml({ packageName, templates, defaultTemplateId }) {
       runTests.addEventListener('change', renderCommandPreview);
       resetButton.addEventListener('click', resetForm);
 
-      form.addEventListener('submit', async (event) => {
+      async function startScaffold(event) {
         event.preventDefault();
         if (state.busy) return;
 
@@ -703,7 +703,10 @@ function createHtml({ packageName, templates, defaultTemplateId }) {
           startButton.disabled = false;
           resetButton.disabled = false;
         }
-      });
+      }
+
+      form.addEventListener('submit', startScaffold);
+      startButton.addEventListener('click', startScaffold);
 
       const eventSource = new EventSource('/events');
 
@@ -837,8 +840,10 @@ function startUiServer(options) {
 
   const server = http.createServer((request, response) => {
     const { method = 'GET', url = '/' } = request;
+    const requestUrl = new URL(url, 'http://127.0.0.1');
+    const pathname = requestUrl.pathname;
 
-    if (method === 'GET' && url === '/') {
+    if (method === 'GET' && pathname === '/') {
       response.writeHead(200, {
         'Content-Type': 'text/html; charset=utf-8'
       });
@@ -852,7 +857,7 @@ function startUiServer(options) {
       return;
     }
 
-    if (method === 'GET' && url === '/events') {
+    if (method === 'GET' && pathname === '/events') {
       response.writeHead(200, {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
@@ -873,7 +878,7 @@ function startUiServer(options) {
       return;
     }
 
-    if (method === 'POST' && url === '/api/start') {
+    if (method === 'POST' && pathname === '/api/start') {
       let body = '';
       request.on('data', (chunk) => {
         body += chunk;
