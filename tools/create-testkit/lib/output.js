@@ -86,8 +86,6 @@ Usage:
   create-testkit upgrade apply --safe [target-directory]
 
 Options:
-  --ui           Launch a local browser UI that wraps the CLI scaffold flow
-  --port         Port for the local UI server (default: 4310)
   --yes          Accept all post-generate prompts
   --no-install   Skip npm install
   --no-setup     Skip template-specific setup such as Playwright browser install

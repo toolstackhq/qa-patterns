@@ -3,8 +3,6 @@ const path = require('node:path');
 function parseCliOptions(args, { resolveTemplate, supportedTemplateIds }) {
   const options = {
     yes: false,
-    ui: false,
-    port: 4310,
     noInstall: false,
     noSetup: false,
     noTest: false,
@@ -21,24 +19,6 @@ function parseCliOptions(args, { resolveTemplate, supportedTemplateIds }) {
       case '--yes':
         options.yes = true;
         break;
-      case '--ui':
-        options.ui = true;
-        break;
-      case '--port': {
-        const portValue = args[index + 1];
-        if (!portValue) {
-          throw new Error('Missing value for --port.');
-        }
-
-        const parsedPort = Number.parseInt(portValue, 10);
-        if (Number.isNaN(parsedPort) || parsedPort < 1 || parsedPort > 65_535) {
-          throw new Error(`Invalid port "${portValue}".`);
-        }
-
-        options.port = parsedPort;
-        index += 1;
-        break;
-      }
       case '--no-install':
         options.noInstall = true;
         break;

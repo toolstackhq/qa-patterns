@@ -35,10 +35,6 @@ const foundations = [
     text: 'Templates include local demo apps, reports, and validation commands.'
   },
   {
-    title: 'Optional local UI',
-    text: 'Launch a browser wrapper for setup decisions while keeping the terminal as the execution source of truth.'
-  },
-  {
     title: 'Safe upgrades',
     text: 'Managed framework files can move forward without overwriting user test logic.'
   }
@@ -72,10 +68,9 @@ const docsLinks = [
 const quickStartPanes = {
   cli: {
     title: 'Use the npm CLI',
-    lead: 'Generate a project in the terminal, or launch the local setup UI when you want a cleaner form-first flow.',
+    lead: 'Generate a project in the terminal with the interactive picker or an explicit template command.',
     install: 'npm install -g @toolstackhq/create-testkit@latest',
     interactive: 'npx @toolstackhq/create-testkit',
-    localUi: 'npx @toolstackhq/create-testkit --ui',
     templates: {
       playwright:
         'npx @toolstackhq/create-testkit playwright-template my-project',
@@ -133,8 +128,6 @@ document.querySelector('#app').innerHTML = `
           <pre class="code-pill"><code>npm install -g @toolstackhq/create-testkit@latest</code></pre>
           <p class="hero__subheading">Run</p>
           <pre class="code-pill"><code>npx @toolstackhq/create-testkit</code></pre>
-          <p class="hero__subheading">Local setup UI</p>
-          <pre class="code-pill"><code>npx @toolstackhq/create-testkit --ui</code></pre>
           <ul class="hero__meta">
             <li>3 tested templates</li>
             <li>Bundled local demo apps</li>
@@ -195,8 +188,6 @@ document.querySelector('#app').innerHTML = `
               <pre class="code-pill"><code>${quickStartPanes.cli.install}</code></pre>
               <p class="quickstart__subheading">Run</p>
               <pre class="code-pill"><code>${quickStartPanes.cli.interactive}</code></pre>
-              <p class="quickstart__subheading">Local setup UI</p>
-              <pre class="code-pill"><code>${quickStartPanes.cli.localUi}</code></pre>
               <div class="command-tabs" role="tablist" aria-label="Template commands">
                 <button type="button" class="command-tab is-active" data-command-tab="playwright" role="tab" aria-selected="true">Playwright</button>
                 <button type="button" class="command-tab" data-command-tab="cypress" role="tab" aria-selected="false">Cypress</button>

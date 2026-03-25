@@ -14,12 +14,6 @@ npm install -g @toolstackhq/create-testkit
 create-testkit
 ```
 
-Launch the local setup UI wrapper:
-
-```bash
-create-testkit --ui
-```
-
 Generate into a new directory:
 
 ```bash
@@ -96,23 +90,6 @@ For non-interactive automation, the CLI also supports:
 - `--no-setup`
 - `--no-test`
 - `--template <template>`
-
-## Local setup UI
-
-The CLI also ships a local browser UI:
-
-```bash
-create-testkit --ui
-```
-
-That flow:
-
-- starts a local server
-- opens a professional tooling-style setup form
-- collects the same scaffold inputs the CLI would ask for
-- mirrors live progress into the browser while keeping the terminal as the primary execution surface
-
-Use it when you want a Spring Initializr-style setup experience without introducing a second generator path.
 
 ## Prerequisite checks
 

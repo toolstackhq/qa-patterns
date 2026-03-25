@@ -46,7 +46,6 @@ const {
   runCommand
 } = require('./lib/prereqs');
 const { scaffoldProject } = require('./lib/scaffold');
-const { startUiServer } = require('./lib/ui');
 const {
   createTemplateAliases,
   getTemplate,
@@ -449,34 +448,6 @@ async function main() {
     resolveTemplate: (value) => resolveTemplate(TEMPLATE_ALIASES, value),
     supportedTemplateIds: SUPPORTED_TEMPLATE_IDS
   });
-
-  if (options.ui) {
-    await startUiServer({
-      colors,
-      defaultTemplateId: DEFAULT_TEMPLATE,
-      packageName: 'create-testkit',
-      port: options.port,
-      runScaffold: (selection) =>
-        runScaffoldWorkflow([], {
-          nonInteractive: true,
-          noInstall: !selection.runInstall,
-          noSetup: !selection.runSetup,
-          noTest: !selection.runTest,
-          positionalArgs: [selection.targetDirectory],
-          runInstall: selection.runInstall,
-          runSetup: selection.runSetup,
-          runTest: selection.runTest,
-          templateName: selection.templateName,
-          withApi: selection.withApi
-        }),
-      templates: TEMPLATES.map((template) => ({
-        description: template.description,
-        id: template.id,
-        label: template.label
-      }))
-    });
-    return;
-  }
 
   await runScaffoldWorkflow(rawArgs);
 }

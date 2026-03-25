@@ -56,11 +56,6 @@ Open the docs site for the live animated terminal walkthrough built with a Termy
 npx @toolstackhq/create-testkit
 ```
 
-```bash
-# Launch the local setup UI wrapper
-npx @toolstackhq/create-testkit --ui
-```
-
 ```text
 ? Select a template
 ? Target directory
@@ -93,8 +88,6 @@ npx -y @toolstackhq/create-testkit upgrade check .
 # Apply only safe managed-template updates
 npx -y @toolstackhq/create-testkit upgrade apply --safe .
 ```
-
-The local `--ui` flow is a browser wrapper over the same scaffold engine. It collects options visually, mirrors progress live, and still keeps the terminal as the primary execution surface.
 
 ## Use as MCP server
 
